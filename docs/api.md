@@ -316,6 +316,8 @@ Extends/pads the edges of the image with `background`, where `extension` is one 
 
 This operation will always occur after resizing and extraction, if any.
 
+If the background contains an alpha value then WebP and PNG format output images will contain an alpha channel, even when the input image does not.
+
 ```javascript
 // Resize to 140 pixels wide, then add 10 transparent pixels
 // to the top, left and right edges and 20 to the bottom edge
