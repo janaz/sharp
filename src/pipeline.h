@@ -150,6 +150,7 @@ struct PipelineBaton {
   double tiffXres;
   double tiffYres;
   int heifQuality;
+  int heifSpeed;
   VipsForeignHeifCompression heifCompression;
   bool heifLossless;
   std::string err;
@@ -262,6 +263,7 @@ struct PipelineBaton {
     tiffXres(1.0),
     tiffYres(1.0),
     heifQuality(80),
+    heifSpeed(5),
     heifCompression(VIPS_FOREIGN_HEIF_COMPRESSION_HEVC),
     heifLossless(false),
     withMetadata(false),

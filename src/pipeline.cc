@@ -824,6 +824,7 @@ class PipelineWorker : public Napi::AsyncWorker {
           VipsArea *area = VIPS_AREA(image.heifsave_buffer(VImage::option()
             ->set("strip", !baton->withMetadata)
             ->set("compression", baton->heifCompression)
+            ->set("speed", baton->heifSpeed)
             ->set("Q", baton->heifQuality)
             ->set("lossless", baton->heifLossless)));
           baton->bufferOut = static_cast<char*>(area->data);
@@ -961,6 +962,7 @@ class PipelineWorker : public Napi::AsyncWorker {
             ->set("strip", !baton->withMetadata)
             ->set("Q", baton->heifQuality)
             ->set("compression", baton->heifCompression)
+            ->set("speed", baton->heifSpeed)
             ->set("lossless", baton->heifLossless));
           baton->formatOut = "heif";
         } else if (baton->formatOut == "dz" || isDz || isDzZip) {
@@ -1371,6 +1373,7 @@ Napi::Value pipeline(const Napi::CallbackInfo& info) {
   vips_enum_from_nick(nullptr, VIPS_TYPE_FOREIGN_TIFF_PREDICTOR,
     sharp::AttrAsStr(options, "tiffPredictor").data()));
   baton->heifQuality = sharp::AttrAsUint32(options, "heifQuality");
+  baton->heifSpeed = sharp::AttrAsUint32(options, "heifSpeed");
   baton->heifLossless = sharp::AttrAsBool(options, "heifLossless");
   baton->heifCompression = static_cast<VipsForeignHeifCompression>(
     vips_enum_from_nick(nullptr, VIPS_TYPE_FOREIGN_HEIF_COMPRESSION,
