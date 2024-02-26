@@ -38,49 +38,6 @@ jobs:
             runs-on: ubuntu-22.04
             runtime: bun
 
-          - name: darwin-x64-node-npm
-            runs-on: macos-11
-            runtime: node
-            package-manager: npm
-          - name: darwin-x64-node-pnpm
-            runs-on: macos-11
-            runtime: node
-            package-manager: pnpm
-          - name: darwin-x64-node-yarn
-            runs-on: macos-11
-            runtime: node
-            package-manager: yarn
-          - name: darwin-x64-node-yarn-pnp
-            runs-on: macos-11
-            runtime: node
-            package-manager: yarn-pnp
-          - name: darwin-x64-deno
-            runs-on: macos-11
-            runtime: deno
-          - name: darwin-x64-bun
-            runs-on: macos-11
-            runtime: bun
-
-          - name: win32-x64-node-npm
-            runs-on: windows-2019
-            runtime: node
-            package-manager: npm
-          - name: win32-x64-node-pnpm
-            runs-on: windows-2019
-            runtime: node
-            package-manager: pnpm
-          - name: win32-x64-node-yarn
-            runs-on: windows-2019
-            runtime: node
-            package-manager: yarn
-          - name: win32-x64-node-yarn-pnp
-            runs-on: windows-2019
-            runtime: node
-            package-manager: yarn-pnp
-          - name: win32-x64-deno
-            runs-on: windows-2019
-            runtime: deno
-
     steps:
       - name: Install Node.js
         if: ${{ matrix.runtime == 'node' }}
@@ -116,7 +73,7 @@ jobs:
           contents: |
             {
               "dependencies": {
-                "sharp": "${{ steps.version.outputs.semver }}"
+                "@revizly/sharp": "${{ steps.version.outputs.semver }}"
               },
               "type": "module"
             }
