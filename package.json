@@ -115,7 +115,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/lovell/sharp.git"
+    "url": "git://github.com/janaz/sharp.git"
   },
   "keywords": [
     "jpeg",
