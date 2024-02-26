@@ -38,7 +38,7 @@ jobs:
       - run: sudo docker exec sharp sh -c "npm test"
       - run: |
           sudo docker exec sharp sh -c "npm run package-from-local-build"
-          sudo docker exec sharp sh -c "npm pkg set \"optionalDependencies.@img/sharp-linux-arm64=file:./npm/linux-arm64\""
+          sudo docker exec sharp sh -c "npm pkg set \"optionalDependencies.@revizly/sharp-linux-arm64=file:./npm/linux-arm64\""
           sudo docker exec sharp sh -c "npm run clean"
           sudo docker exec sharp sh -c "npm install --ignore-scripts"
           sudo docker exec sharp sh -c "npm test"
@@ -62,44 +62,7 @@ jobs:
       - run: sudo docker exec sharp sh -c "npm test"
       - run: |
           sudo docker exec sharp sh -c "npm run package-from-local-build"
-          sudo docker exec sharp sh -c "npm pkg set \"optionalDependencies.@img/sharp-linux-arm64=file:./npm/linux-arm64\""
-          sudo docker exec sharp sh -c "npm run clean"
-          sudo docker exec sharp sh -c "npm install --ignore-scripts"
-          sudo docker exec sharp sh -c "npm test"
-  linux-arm64-musl-node-18:
-    resource_class: arm.medium
-    machine:
-      image: ubuntu-2004:current
-    steps:
-      - checkout
-      - run: |
-          sudo docker run -dit --name sharp --volume "${PWD}:/mnt/sharp" --workdir /mnt/sharp node:18-alpine3.17
-          sudo docker exec sharp sh -c "apk add build-base git python3 font-noto --update-cache"
-      - run: sudo docker exec sharp sh -c "npm install --build-from-source"
-      - run: sudo docker exec sharp sh -c "npm test"
-      - run: |
-          sudo docker exec sharp sh -c "npm run package-from-local-build"
-          sudo docker exec sharp sh -c "npm pkg set \"optionalDependencies.@img/sharp-linuxmusl-arm64=file:./npm/linuxmusl-arm64\""
-          sudo docker exec sharp sh -c "npm run clean"
-          sudo docker exec sharp sh -c "npm install --ignore-scripts"
-          sudo docker exec sharp sh -c "npm test"
-      - run: "[[ -n $CIRCLE_TAG ]] && sudo docker exec --env prebuild_upload sharp sh -c \"cd src && ln -s ../package.json && npx prebuild --upload=$prebuild_upload\" || true"
-  linux-arm64-musl-node-20:
-    resource_class: arm.medium
-    machine:
-      image: ubuntu-2004:current
-    steps:
-      - checkout
-      - run: |
-          sudo docker run -dit --name sharp --workdir /mnt/sharp node:20-alpine3.18
-          sudo docker exec sharp sh -c "apk add build-base git python3 font-noto --update-cache"
-          sudo docker exec sharp sh -c "mkdir -p /mnt/sharp"
-          sudo docker cp . sharp:/mnt/sharp/.
-      - run: sudo docker exec sharp sh -c "npm install --build-from-source"
-      - run: sudo docker exec sharp sh -c "npm test"
-      - run: |
-          sudo docker exec sharp sh -c "npm run package-from-local-build"
-          sudo docker exec sharp sh -c "npm pkg set \"optionalDependencies.@img/sharp-linuxmusl-arm64=file:./npm/linuxmusl-arm64\""
+          sudo docker exec sharp sh -c "npm pkg set \"optionalDependencies.@revizly/sharp-linux-arm64=file:./npm/linux-arm64\""
           sudo docker exec sharp sh -c "npm run clean"
           sudo docker exec sharp sh -c "npm install --ignore-scripts"
           sudo docker exec sharp sh -c "npm test"

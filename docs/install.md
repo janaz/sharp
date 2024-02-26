@@ -242,8 +242,7 @@ option.
   "build": {
     "asar": true,
     "asarUnpack": [
-      "**/node_modules/sharp/**/*",
-      "**/node_modules/@img/**/*"
+      "**/node_modules/@revizly/**/*"
     ]
   }
 }

@@ -62,7 +62,7 @@ workspaces.map(async platform => {
   // Copy files for packages without an explicit sharp-libvips dependency (Windows, wasm)
   if (platform.startsWith('win') || platform.startsWith('wasm')) {
     const libvipsPlatform = platform === 'wasm32' ? 'dev-wasm32' : platform;
-    const sharpLibvipsDir = path.join(require(`@img/sharp-libvips-${libvipsPlatform}/lib`), '..');
+    const sharpLibvipsDir = path.join(require(`@revizly/sharp-libvips-${libvipsPlatform}/lib`), '..');
     // Copy versions.json
     await copyFile(path.join(sharpLibvipsDir, 'versions.json'), path.join(dir, 'versions.json'));
     // Append third party licensing to README
