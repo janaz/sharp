@@ -16,7 +16,7 @@ jobs:
   linux-arm64-glibc-node-18:
     resource_class: arm.medium
     machine:
-      image: ubuntu-2004:current
+      image: ubuntu-2204:current
     steps:
       - checkout
       - run: |
@@ -38,7 +38,7 @@ jobs:
   linux-arm64-glibc-node-20:
     resource_class: arm.medium
     machine:
-      image: ubuntu-2004:current
+      image: ubuntu-2204:current
     steps:
       - checkout
       - run: |
