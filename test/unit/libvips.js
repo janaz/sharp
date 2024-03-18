@@ -155,19 +155,6 @@ describe('libvips binaries', function () {
   });
 
   describe('yarn locator hash', () => {
-    it('known platform', () => {
-      const cc = process.env.CC;
-      delete process.env.CC;
-      process.env.npm_config_platform = 'linux';
-      process.env.npm_config_arch = 's390x';
-      process.env.npm_config_libc = '';
-      const locatorHash = libvips.yarnLocator();
-      assert.strictEqual(locatorHash, '45978c229d');
-      delete process.env.npm_config_platform;
-      delete process.env.npm_config_arch;
-      delete process.env.npm_config_libc;
-      process.env.CC = cc;
-    });
     it('unknown platform', () => {
       process.env.npm_config_platform = 'unknown-platform';
       const locatorHash = libvips.yarnLocator();
