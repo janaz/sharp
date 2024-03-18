@@ -171,7 +171,7 @@
   "license": "Apache-2.0",
   "engines": {
     "node": "^18.17.0 || ^20.3.0 || >=21.0.0",
-    "libvips": ">=8.15.1"
+    "libvips": ">=8.15.2"
   },
   "funding": {
     "url": "https://opencollective.com/libvips"
