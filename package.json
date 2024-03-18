@@ -141,16 +141,14 @@
     "semver": "^7.6.0"
   },
   "optionalDependencies": {
-    "@revizly/sharp-libvips-linux-arm64": "1.0.2",
-    "@revizly/sharp-libvips-linux-x64": "1.0.2",
+    "@revizly/sharp-libvips-linux-arm64": "1.0.3",
+    "@revizly/sharp-libvips-linux-x64": "1.0.3",
     "@revizly/sharp-linux-arm64": "0.33.2-revizly7",
     "@revizly/sharp-linux-x64": "0.33.2-revizly7"
   },
   "devDependencies": {
     "@emnapi/runtime": "^1.0.0",
-    "@revizly/sharp-libvips-dev": "1.0.2",
-    "@revizly/sharp-libvips-win32-ia32": "1.0.1",
-    "@revizly/sharp-libvips-win32-x64": "1.0.1",
+    "@revizly/sharp-libvips-dev": "1.0.3",
     "@types/node": "*",
     "async": "^3.2.5",
     "cc": "^3.0.1",
