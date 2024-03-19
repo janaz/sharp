@@ -39,7 +39,7 @@ limitations under the License.
 
 workspaces.map(async platform => {
   const prebuildPlatform = platform === 'wasm32' ? 'emscripten-wasm32' : platform;
-  const url = `https://github.com/lovell/sharp/releases/download/v${version}/sharp-v${version}-napi-v9-${prebuildPlatform}.tar.gz`;
+  const url = `https://github.com/janaz/sharp/releases/download/v${version}/sharp-v${version}-napi-v9-${prebuildPlatform}.tar.gz`;
   const dir = path.join(__dirname, platform);
   const response = await fetch(url);
   if (!response.ok) {
