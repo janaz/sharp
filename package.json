@@ -143,8 +143,8 @@
   "optionalDependencies": {
     "@revizly/sharp-libvips-linux-arm64": "1.0.3",
     "@revizly/sharp-libvips-linux-x64": "1.0.3",
-    "@revizly/sharp-linux-arm64": "0.33.3-revizly1",
-    "@revizly/sharp-linux-x64": "0.33.3-revizly1"
+    "@revizly/sharp-linux-arm64": "0.33.2-revizly8",
+    "@revizly/sharp-linux-x64": "0.33.2-revizly8"
   },
   "devDependencies": {
     "@emnapi/runtime": "^1.1.0",
