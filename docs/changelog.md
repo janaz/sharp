@@ -6,9 +6,17 @@ Requires libvips v8.15.2
 
 ### v0.33.4 - TBD
 
+* Remove experimental status from `pipelineColourspace`.
+
 * TypeScript: add missing definitions for `OverlayOptions`.
   [#4048](https://github.com/lovell/sharp/pull/4048)
   [@ike-gg](https://github.com/ike-gg)
+
+* Install: add advanced option to force use of a globally-installed libvips.
+  [#4060](https://github.com/lovell/sharp/issues/4060)
+
+* Expose `bilinear` resizing kernel (and interpolator).
+  [#4061](https://github.com/lovell/sharp/issues/4061)
 
 ### v0.33.3 - 23rd March 2024
 
