@@ -1081,9 +1081,10 @@ namespace sharp {
   /*
     Ensure decoding remains sequential.
   */
-  VImage StaySequential(VImage image, VipsAccess access, bool condition) {
-    if (access == VIPS_ACCESS_SEQUENTIAL && condition) {
-      return image.copy_memory();
+  VImage StaySequential(VImage image, bool condition) {
+    if (vips_image_is_sequential(image.get_image()) && condition) {
+      image = image.copy_memory().copy();
+      image.remove(VIPS_META_SEQUENTIAL);
     }
     return image;
   }
