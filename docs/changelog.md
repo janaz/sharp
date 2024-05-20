@@ -4,7 +4,7 @@
 
 Requires libvips v8.15.2
 
-### v0.33.4 - TBD
+### v0.33.4 - 16th May 2024
 
 * Remove experimental status from `pipelineColourspace`.
 
@@ -29,6 +29,10 @@ Requires libvips v8.15.2
 * Simplify internal StaySequential logic.
   [#4074](https://github.com/lovell/sharp/pull/4074)
   [@kleisauke](https://github.com/kleisauke)
+
+* Ensure negate operation occurs after profile conversion.
+  [#4096](https://github.com/lovell/sharp/pull/4096)
+  [@adriaanmeuris](https://github.com/adriaanmeuris)
 
 ### v0.33.3 - 23rd March 2024
 
