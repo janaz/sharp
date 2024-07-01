@@ -1,7 +1,7 @@
 {
   "name": "@revizly/sharp",
   "description": "High performance Node.js image processing, the fastest module to resize JPEG, PNG, WebP, GIF, AVIF and TIFF images",
-  "version": "0.33.4-revizly3",
+  "version": "0.33.4-revizly4",
   "author": "Lovell Fuller <npm@lovell.info>",
   "homepage": "https://sharp.pixelplumbing.com",
   "contributors": [
@@ -144,8 +144,8 @@
   "optionalDependencies": {
     "@revizly/sharp-libvips-linux-arm64": "1.0.6",
     "@revizly/sharp-libvips-linux-x64": "1.0.6",
-    "@revizly/sharp-linux-arm64": "0.33.4-revizly1",
-    "@revizly/sharp-linux-x64": "0.33.4-revizly1"
+    "@revizly/sharp-linux-arm64": "0.33.4-revizly3",
+    "@revizly/sharp-linux-x64": "0.33.4-revizly3"
   },
   "devDependencies": {
     "@emnapi/runtime": "^1.2.0",
