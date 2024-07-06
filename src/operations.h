@@ -53,7 +53,7 @@ namespace sharp {
    * Convolution with a kernel.
    */
   VImage Convolve(VImage image, int const width, int const height,
-    double const scale, double const offset, std::unique_ptr<double[]> const &kernel_v);
+    double const scale, double const offset, std::vector<double> const &kernel_v);
 
   /*
    * Sharpen flat and jagged areas. Use sigma of -1.0 for fast sharpen.
@@ -95,7 +95,7 @@ namespace sharp {
    * Recomb with a Matrix of the given bands/channel size.
    * Eg. RGB will be a 3x3 matrix.
    */
-  VImage Recomb(VImage image, std::unique_ptr<double[]> const &matrix);
+  VImage Recomb(VImage image, std::vector<double> const &matrix);
 
   /*
    * Modulate brightness, saturation, hue and lightness
