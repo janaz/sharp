@@ -31,7 +31,7 @@ jobs:
       - name: Dependencies (Rocky Linux glibc)
         if: contains(matrix.container, 'rockylinux')
         run: |
-          dnf install -y gcc-toolset-11-gcc-c++ make git python3 fontconfig google-noto-sans-fonts
+          dnf install -y gcc-toolset-11-gcc-c++ make git python3.12 fontconfig google-noto-sans-fonts
           echo "/opt/rh/gcc-toolset-11/root/usr/bin" >> $GITHUB_PATH
       - name: Dependencies (Node.js)
         if: "!contains(matrix.platform, 'linuxmusl')"
