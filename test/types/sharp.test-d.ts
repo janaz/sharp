@@ -59,6 +59,12 @@ sharp('input.jpg')
 
 sharp('input.jpg').resize({ width: 300 }).blur(false).blur(true).toFile('output.jpg');
 
+sharp().blur();
+sharp().blur(1);
+sharp().blur({ sigma: 1 });
+sharp().blur({ sigma: 1, precision: 'approximate' });
+sharp().blur({ sigma: 1, minAmplitude: 0.8 });
+
 sharp({
   create: {
     width: 300,

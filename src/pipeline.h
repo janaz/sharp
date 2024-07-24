@@ -78,6 +78,8 @@ struct PipelineBaton {
   bool negate;
   bool negateAlpha;
   double blurSigma;
+  VipsPrecision precision;
+  double minAmpl;
   double brightness;
   double saturation;
   int hue;
