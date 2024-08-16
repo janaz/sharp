@@ -16,7 +16,7 @@
 
 #if (VIPS_MAJOR_VERSION < 8) || \
   (VIPS_MAJOR_VERSION == 8 && VIPS_MINOR_VERSION < 15) || \
-  (VIPS_MAJOR_VERSION == 8 && VIPS_MINOR_VERSION == 15 && VIPS_MICRO_VERSION < 3)
+  (VIPS_MAJOR_VERSION == 8 && VIPS_MINOR_VERSION == 15 && VIPS_MICRO_VERSION < 2)
 #error "libvips version 8.15.3+ is required - please see https://sharp.pixelplumbing.com/install"
 #endif
 
