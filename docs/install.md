@@ -21,11 +21,6 @@ yarn add sharp
 ```
 
 ```sh
-# yarn v1 (maintenance mode)
-yarn add sharp --ignore-engines
-```
-
-```sh
 bun add sharp
 ```
 
@@ -92,7 +87,7 @@ Use the [supportedArchitectures](https://pnpm.io/package_json#pnpmsupportedarchi
 ## Custom libvips
 
 To use a custom, globally-installed version of libvips instead of the provided binaries,
-make sure it is at least the version listed under `engines.libvips` in the `package.json` file
+make sure it is at least the version listed under `config.libvips` in the `package.json` file
 and that it can be located using `pkg-config --modversion vips-cpp`.
 
 For help compiling libvips and its dependencies, please see

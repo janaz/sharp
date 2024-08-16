@@ -1,46 +1,39 @@
 {
-  "name": "@revizly/sharp-linux-x64",
-  "version": "0.33.4-revizly6",
-  "description": "Prebuilt sharp for use with Linux (glibc) x64",
+  "name": "@revizly/sharp-wasm32",
+  "version": "0.33.5-rc.1",
+  "description": "Prebuilt sharp for use with wasm32",
   "author": "Lovell Fuller <npm@lovell.info>",
   "homepage": "https://sharp.pixelplumbing.com",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lovell/sharp.git",
-    "directory": "npm/linux-x64"
+    "directory": "npm/wasm32"
   },
-  "license": "Apache-2.0",
+  "license": "Apache-2.0 AND LGPL-3.0-or-later AND MIT",
   "funding": {
     "url": "https://opencollective.com/libvips"
   },
   "preferUnplugged": true,
-  "optionalDependencies": {
-    "@revizly/sharp-libvips-linux-x64": "1.0.7"
-  },
   "files": [
-    "lib"
+    "lib",
+    "versions.json"
   ],
   "publishConfig": {
     "access": "public"
   },
   "type": "commonjs",
   "exports": {
-    "./sharp.node": "./lib/sharp-linux-x64.node",
-    "./package": "./package.json"
+    "./sharp.node": "./lib/sharp-wasm32.node.js",
+    "./package": "./package.json",
+    "./versions": "./versions.json"
   },
   "engines": {
     "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
   },
-  "config": {
-    "glibc": ">=2.26"
+  "dependencies": {
+    "@emnapi/runtime": "^1.2.0"
   },
-  "os": [
-    "linux"
-  ],
-  "libc": [
-    "glibc"
-  ],
   "cpu": [
-    "x64"
+    "wasm32"
   ]
 }

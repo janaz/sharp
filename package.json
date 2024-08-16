@@ -157,9 +157,9 @@
     "exif-reader": "^2.0.1",
     "extract-zip": "^2.0.1",
     "icc": "^3.0.0",
-    "jsdoc-to-markdown": "^8.0.2",
+    "jsdoc-to-markdown": "^8.0.3",
     "license-checker": "^25.0.1",
-    "mocha": "^10.7.0",
+    "mocha": "^10.7.3",
     "node-addon-api": "^8.1.0",
     "nyc": "^17.0.0",
     "prebuild": "^13.0.1",
@@ -169,8 +169,10 @@
   },
   "license": "Apache-2.0",
   "engines": {
-    "node": "^18.17.0 || ^20.3.0 || >=21.0.0",
-    "libvips": ">=8.15.2"
+    "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+  },
+  "config": {
+    "libvips": ">=8.15.3"
   },
   "funding": {
     "url": "https://opencollective.com/libvips"

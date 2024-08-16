@@ -2,9 +2,11 @@
 
 ## v0.33 - *gauge*
 
-Requires libvips v8.15.2
+Requires libvips v8.15.3
 
 ### v0.33.5 - TBD
+
+* Upgrade to libvips v8.15.3 for upstream bug fixes.
 
 * Add `pageHeight` and `pages` to response of multi-page output.
   [#3411](https://github.com/lovell/sharp/issues/3411)
@@ -12,6 +14,9 @@ Requires libvips v8.15.2
 * Ensure option to force use of a globally-installed libvips works correctly.
   [#4111](https://github.com/lovell/sharp/pull/4111)
   [@project0](https://github.com/project0)
+
+* Minimise use of `engines` property to improve yarn v1 support.
+  [#4130](https://github.com/lovell/sharp/issues/4130)
 
 * Ensure `sharp.format.heif` includes only AVIF when using prebuilt binaries.
   [#4132](https://github.com/lovell/sharp/issues/4132)
@@ -28,6 +33,13 @@ Requires libvips v8.15.2
   [#4168](https://github.com/lovell/sharp/pull/4168)
   [#4172](https://github.com/lovell/sharp/pull/4172)
   [@marcosc90](https://github.com/marcosc90)
+
+* Ensure `keepIccProfile` avoids colour transformation where possible.
+  [#4186](https://github.com/lovell/sharp/issues/4186)
+
+* TypeScript: `chromaSubsampling` metadata is optional.
+  [#4191](https://github.com/lovell/sharp/pull/4191)
+  [@DavidVaness](https://github.com/DavidVaness)
 
 ### v0.33.4 - 16th May 2024
 
