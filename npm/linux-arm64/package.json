@@ -15,7 +15,7 @@
   },
   "preferUnplugged": true,
   "optionalDependencies": {
-    "@revizly/sharp-libvips-linux-arm64": "1.0.7"
+    "@revizly/sharp-libvips-linux-arm64": "1.0.8"
   },
   "files": [
     "lib"
