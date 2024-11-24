@@ -201,6 +201,48 @@ describe('Image metadata', function () {
     });
   });
 
+  it('PNG with greyscale bKGD chunk - 8 bit', async () => {
+    const data = await sharp(fixtures.inputPng8BitGreyBackground).metadata();
+    assert.deepStrictEqual(data, {
+      background: {
+        gray: 0
+      },
+      bitsPerSample: 8,
+      channels: 2,
+      density: 72,
+      depth: 'uchar',
+      format: 'png',
+      hasAlpha: true,
+      hasProfile: false,
+      height: 32,
+      isPalette: false,
+      isProgressive: false,
+      space: 'b-w',
+      width: 32
+    });
+  });
+
+  it('PNG with greyscale bKGD chunk - 16 bit', async () => {
+    const data = await sharp(fixtures.inputPng16BitGreyBackground).metadata();
+    assert.deepStrictEqual(data, {
+      background: {
+        gray: 67
+      },
+      bitsPerSample: 16,
+      channels: 2,
+      density: 72,
+      depth: 'ushort',
+      format: 'png',
+      hasAlpha: true,
+      hasProfile: false,
+      height: 32,
+      isPalette: false,
+      isProgressive: false,
+      space: 'grey16',
+      width: 32
+    });
+  });
+
   it('WebP', function (done) {
     sharp(fixtures.inputWebP).metadata(function (err, metadata) {
       if (err) throw err;
@@ -878,6 +920,8 @@ describe('Image metadata', function () {
       channels: 3,
       depth: 'uchar',
       isProgressive: false,
+      isPalette: false,
+      bitsPerSample: 8,
       pages: 1,
       pagePrimary: 0,
       compression: 'av1',
@@ -931,7 +975,7 @@ describe('Image metadata', function () {
     sharp(fixtures.inputJpgWithCorruptHeader)
       .metadata(function (err) {
         assert.strictEqual(true, !!err);
-        assert.ok(err.message.includes('Input file has corrupt header: VipsJpeg: Premature end of'), err);
+        assert.ok(err.message.includes('Input file has corrupt header: VipsJpeg: premature end of'), err);
         done();
       });
   });
@@ -940,7 +984,7 @@ describe('Image metadata', function () {
     sharp(fs.readFileSync(fixtures.inputJpgWithCorruptHeader))
       .metadata(function (err) {
         assert.strictEqual(true, !!err);
-        assert.ok(err.message.includes('Input buffer has corrupt header: VipsJpeg: Premature end of'), err);
+        assert.ok(err.message.includes('Input buffer has corrupt header: VipsJpeg: premature end of'), err);
         done();
       });
   });

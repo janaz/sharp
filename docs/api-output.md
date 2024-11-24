@@ -439,6 +439,7 @@ Use these WebP options for output image.
 | [options.lossless] | <code>boolean</code> | <code>false</code> | use lossless compression mode |
 | [options.nearLossless] | <code>boolean</code> | <code>false</code> | use near_lossless compression mode |
 | [options.smartSubsample] | <code>boolean</code> | <code>false</code> | use high quality chroma subsampling |
+| [options.smartDeblock] | <code>boolean</code> | <code>false</code> | auto-adjust the deblocking filter, can improve low contrast edges (slow) |
 | [options.preset] | <code>string</code> | <code>&quot;&#x27;default&#x27;&quot;</code> | named preset for preprocessing/filtering, one of: default, photo, picture, drawing, icon, text |
 | [options.effort] | <code>number</code> | <code>4</code> | CPU effort, between 0 (fastest) and 6 (slowest) |
 | [options.loop] | <code>number</code> | <code>0</code> | number of animation iterations, use 0 for infinite animation |
@@ -694,8 +695,6 @@ Requires libvips compiled with support for libjxl.
 The prebuilt binaries do not include this - see
 [installing a custom libvips](https://sharp.pixelplumbing.com/install#custom-libvips).
 
-Image metadata (EXIF, XMP) is unsupported.
-
 
 **Throws**:
 
@@ -710,7 +709,9 @@ Image metadata (EXIF, XMP) is unsupported.
 | [options.quality] | <code>number</code> |  | calculate `distance` based on JPEG-like quality, between 1 and 100, overrides distance if specified |
 | [options.decodingTier] | <code>number</code> | <code>0</code> | target decode speed tier, between 0 (highest quality) and 4 (lowest quality) |
 | [options.lossless] | <code>boolean</code> | <code>false</code> | use lossless compression |
-| [options.effort] | <code>number</code> | <code>7</code> | CPU effort, between 3 (fastest) and 9 (slowest) |
+| [options.effort] | <code>number</code> | <code>7</code> | CPU effort, between 1 (fastest) and 9 (slowest) |
+| [options.loop] | <code>number</code> | <code>0</code> | number of animation iterations, use 0 for infinite animation |
+| [options.delay] | <code>number</code> \| <code>Array.&lt;number&gt;</code> |  | delay(s) between animation frames (in milliseconds) |
 
 
 

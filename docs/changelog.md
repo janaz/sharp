@@ -1,12 +1,20 @@
 # Changelog
 
-## v0.33 - *gauge*
+## v0.34 - *hat*
 
-Requires libvips v8.15.5-rc1
+Requires libvips v8.16.0
 
 ### v0.33.6 - TBD
 
-* Upgrade to libvips v8.15.5-rc1 for upstream bug fixes.
+* Add `isPalette` and `bitsPerSample` to metadata, deprecate `paletteBitDepth`.
+
+* Expose WebP `smartDeblock` output option.
+
+* Support `info.size` on wide-character systems via upgrade to C++17.
+  [#3943](https://github.com/lovell/sharp/issues/3943)
+
+* Ensure `background` metadata can be parsed by `color` package.
+  [#4090](https://github.com/lovell/sharp/issues/4090)
 
 * TypeScript: Ensure channel counts use the correct range.
   [#4197](https://github.com/lovell/sharp/pull/4197)
@@ -19,6 +27,10 @@ Requires libvips v8.15.5-rc1
 * Add `pdfBackground` constructor property.
   [#4207](https://github.com/lovell/sharp/pull/4207)
   [@calebmer](https://github.com/calebmer)
+
+## v0.33 - *gauge*
+
+Requires libvips v8.15.3
 
 ### v0.33.5 - 16th August 2024
 

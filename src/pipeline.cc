@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <filesystem>
 #include <map>
 #include <memory>
 #include <numeric>
@@ -19,17 +20,6 @@
 #include "common.h"
 #include "operations.h"
 #include "pipeline.h"
-
-#ifdef _WIN32
-#define STAT64_STRUCT __stat64
-#define STAT64_FUNCTION _stat64
-#elif defined(_LARGEFILE64_SOURCE)
-#define STAT64_STRUCT stat64
-#define STAT64_FUNCTION stat64
-#else
-#define STAT64_STRUCT stat
-#define STAT64_FUNCTION stat
-#endif
 
 class PipelineWorker : public Napi::AsyncWorker {
  public:
@@ -929,6 +919,7 @@ class PipelineWorker : public Napi::AsyncWorker {
             ->set("lossless", baton->webpLossless)
             ->set("near_lossless", baton->webpNearLossless)
             ->set("smart_subsample", baton->webpSmartSubsample)
+            ->set("smart_deblock", baton->webpSmartDeblock)
             ->set("preset", baton->webpPreset)
             ->set("effort", baton->webpEffort)
             ->set("min_size", baton->webpMinSize)
@@ -1136,6 +1127,7 @@ class PipelineWorker : public Napi::AsyncWorker {
             ->set("lossless", baton->webpLossless)
             ->set("near_lossless", baton->webpNearLossless)
             ->set("smart_subsample", baton->webpSmartSubsample)
+            ->set("smart_deblock", baton->webpSmartDeblock)
             ->set("preset", baton->webpPreset)
             ->set("effort", baton->webpEffort)
             ->set("min_size", baton->webpMinSize)
@@ -1304,9 +1296,11 @@ class PipelineWorker : public Napi::AsyncWorker {
         Callback().Call(Receiver().Value(), { env.Null(), data, info });
       } else {
         // Add file size to info
-        struct STAT64_STRUCT st;
-        if (STAT64_FUNCTION(baton->fileOut.data(), &st) == 0) {
-          info.Set("size", static_cast<uint32_t>(st.st_size));
+        if (baton->formatOut != "dz" || sharp::IsDzZip(baton->fileOut)) {
+          try {
+            uint32_t const size = static_cast<uint32_t>(std::filesystem::file_size(baton->fileOut));
+            info.Set("size", size);
+          } catch (...) {}
         }
         Callback().Call(Receiver().Value(), { env.Null(), info });
       }
@@ -1419,6 +1413,7 @@ class PipelineWorker : public Napi::AsyncWorker {
         {"lossless", baton->webpLossless ? "true" : "false"},
         {"near_lossless", baton->webpNearLossless ? "true" : "false"},
         {"smart_subsample", baton->webpSmartSubsample ? "true" : "false"},
+        {"smart_deblock", baton->webpSmartDeblock ? "true" : "false"},
         {"preset", vips_enum_nick(VIPS_TYPE_FOREIGN_WEBP_PRESET, baton->webpPreset)},
         {"min_size", baton->webpMinSize ? "true" : "false"},
         {"mixed", baton->webpMixed ? "true" : "false"},
@@ -1676,6 +1671,7 @@ Napi::Value pipeline(const Napi::CallbackInfo& info) {
   baton->webpLossless = sharp::AttrAsBool(options, "webpLossless");
   baton->webpNearLossless = sharp::AttrAsBool(options, "webpNearLossless");
   baton->webpSmartSubsample = sharp::AttrAsBool(options, "webpSmartSubsample");
+  baton->webpSmartDeblock = sharp::AttrAsBool(options, "webpSmartDeblock");
   baton->webpPreset = sharp::AttrAsEnum<VipsForeignWebpPreset>(options, "webpPreset", VIPS_TYPE_FOREIGN_WEBP_PRESET);
   baton->webpEffort = sharp::AttrAsUint32(options, "webpEffort");
   baton->webpMinSize = sharp::AttrAsBool(options, "webpMinSize");

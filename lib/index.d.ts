@@ -1076,6 +1076,10 @@ declare namespace sharp {
         chromaSubsampling?: string | undefined;
         /** Boolean indicating whether the image is interlaced using a progressive scan */
         isProgressive?: boolean | undefined;
+        /** Boolean indicating whether the image is palette-based (GIF, PNG). */
+        isPalette?: boolean | undefined;
+        /** Number of bits per sample for each channel (GIF, PNG). */
+        bitsPerSample?: number | undefined;
         /** Number of pages/frames contained within the image, with support for TIFF, HEIF, PDF, animated GIF and animated WebP */
         pages?: number | undefined;
         /** Number of pixels high each page in a multi-page image will be. */
@@ -1102,8 +1106,8 @@ declare namespace sharp {
         tifftagPhotoshop?: Buffer | undefined;
         /** The encoder used to compress an HEIF file, `av1` (AVIF) or `hevc` (HEIC) */
         compression?: 'av1' | 'hevc';
-        /** Default background colour, if present, for PNG (bKGD) and GIF images, either an RGB Object or a single greyscale value */
-        background?: { r: number; g: number; b: number } | number;
+        /** Default background colour, if present, for PNG (bKGD) and GIF images */
+        background?: { r: number; g: number; b: number } | { gray: number };
         /** Details of each level in a multi-level image provided as an array of objects, requires libvips compiled with support for OpenSlide */
         levels?: LevelMetadata[] | undefined;
         /** Number of Sub Image File Directories in an OME-TIFF image */

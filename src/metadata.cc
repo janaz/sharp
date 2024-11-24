@@ -3,6 +3,7 @@
 
 #include <numeric>
 #include <vector>
+#include <cmath>
 
 #include <napi.h>
 #include <vips/vips8>
@@ -47,8 +48,11 @@ class MetadataWorker : public Napi::AsyncWorker {
       if (image.get_typeof("interlaced") == G_TYPE_INT) {
         baton->isProgressive = image.get_int("interlaced") == 1;
       }
-      if (image.get_typeof("palette-bit-depth") == G_TYPE_INT) {
-        baton->paletteBitDepth = image.get_int("palette-bit-depth");
+      if (image.get_typeof(VIPS_META_PALETTE) == G_TYPE_INT) {
+        baton->isPalette = image.get_int(VIPS_META_PALETTE);
+      }
+      if (image.get_typeof(VIPS_META_BITS_PER_SAMPLE) == G_TYPE_INT) {
+        baton->bitsPerSample = image.get_int(VIPS_META_BITS_PER_SAMPLE);
       }
       if (image.get_typeof(VIPS_META_N_PAGES) == G_TYPE_INT) {
         baton->pages = image.get_int(VIPS_META_N_PAGES);
@@ -171,8 +175,13 @@ class MetadataWorker : public Napi::AsyncWorker {
         info.Set("chromaSubsampling", baton->chromaSubsampling);
       }
       info.Set("isProgressive", baton->isProgressive);
-      if (baton->paletteBitDepth > 0) {
-        info.Set("paletteBitDepth", baton->paletteBitDepth);
+      info.Set("isPalette", baton->isPalette);
+      if (baton->bitsPerSample > 0) {
+        info.Set("bitsPerSample", baton->bitsPerSample);
+        if (baton->isPalette) {
+          // Deprecated, remove with libvips 8.17.0
+          info.Set("paletteBitDepth", baton->bitsPerSample);
+        }
       }
       if (baton->pages > 0) {
         info.Set("pages", baton->pages);
@@ -218,15 +227,15 @@ class MetadataWorker : public Napi::AsyncWorker {
         info.Set("subifds", baton->subifds);
       }
       if (!baton->background.empty()) {
+        Napi::Object background = Napi::Object::New(env);
         if (baton->background.size() == 3) {
-          Napi::Object background = Napi::Object::New(env);
           background.Set("r", baton->background[0]);
           background.Set("g", baton->background[1]);
           background.Set("b", baton->background[2]);
-          info.Set("background", background);
         } else {
-          info.Set("background", baton->background[0]);
+          background.Set("gray", round(baton->background[0] * 100 / 255));
         }
+        info.Set("background", background);
       }
       info.Set("hasProfile", baton->hasProfile);
       info.Set("hasAlpha", baton->hasAlpha);

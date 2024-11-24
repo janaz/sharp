@@ -18,7 +18,7 @@
         # Build libvips C++ binding for Windows due to MSVC std library ABI changes
         'type': 'shared_library',
         'defines': [
-          'VIPS_CPLUSPLUS_EXPORTS',
+          '_VIPS_PUBLIC=__declspec(dllexport)',
           '_ALLOW_KEYWORD_MACROS'
         ],
         'sources': [
@@ -45,6 +45,9 @@
           'Release': {
             'msvs_settings': {
               'VCCLCompilerTool': {
+                "AdditionalOptions": [
+                  "/std:c++17"
+                ],
                 'ExceptionHandling': 1,
                 'Optimization': 1,
                 'WholeProgramOptimization': 'true'
@@ -172,6 +175,7 @@
                 '-l:libvips-cpp.so.<(vips_version)'
               ],
               'ldflags': [
+                '-lstdc++fs',
                 '-Wl,-s',
                 '-Wl,--disable-new-dtags',
                 '-Wl,-z,nodelete',
@@ -207,14 +211,14 @@
       }]
     ],
     'cflags_cc': [
-      '-std=c++0x',
+      '-std=c++17',
       '-fexceptions',
       '-Wall',
       '-Os'
     ],
     'xcode_settings': {
-      'CLANG_CXX_LANGUAGE_STANDARD': 'c++11',
-      'MACOSX_DEPLOYMENT_TARGET': '10.13',
+      'CLANG_CXX_LANGUAGE_STANDARD': 'c++17',
+      'MACOSX_DEPLOYMENT_TARGET': '10.15',
       'GCC_ENABLE_CPP_EXCEPTIONS': 'YES',
       'GCC_ENABLE_CPP_RTTI': 'YES',
       'OTHER_CPLUSPLUSFLAGS': [
@@ -234,6 +238,9 @@
           ['OS == "win"', {
             'msvs_settings': {
               'VCCLCompilerTool': {
+                "AdditionalOptions": [
+                  "/std:c++17"
+                ],
                 'ExceptionHandling': 1,
                 'Optimization': 1,
                 'WholeProgramOptimization': 'true'
