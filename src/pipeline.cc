@@ -42,7 +42,39 @@ class PipelineWorker : public Napi::AsyncWorker {
       // Open input
       vips::VImage image;
       sharp::ImageType inputImageType;
-      std::tie(image, inputImageType) = sharp::OpenInput(baton->input);
+      if (baton->join.empty()) {
+        std::tie(image, inputImageType) = sharp::OpenInput(baton->input);
+      } else {
+        std::vector<VImage> images;
+        bool hasAlpha = false;
+        for (auto &join : baton->join) {
+          std::tie(image, inputImageType) = sharp::OpenInput(join);
+          image = sharp::EnsureColourspace(image, baton->colourspacePipeline);
+          images.push_back(image);
+          hasAlpha |= image.has_alpha();
+        }
+        if (hasAlpha) {
+          for (auto &image : images) {
+            if (!image.has_alpha()) {
+              image = sharp::EnsureAlpha(image, 1);
+            }
+          }
+        } else {
+          baton->input->joinBackground.pop_back();
+        }
+        inputImageType = sharp::ImageType::PNG;
+        image = VImage::arrayjoin(images, VImage::option()
+          ->set("across", baton->input->joinAcross)
+          ->set("shim", baton->input->joinShim)
+          ->set("background", baton->input->joinBackground)
+          ->set("halign", baton->input->joinHalign)
+          ->set("valign", baton->input->joinValign));
+        if (baton->input->joinAnimated) {
+          image = image.copy();
+          image.set(VIPS_META_N_PAGES, static_cast<int>(images.size()));
+          image.set(VIPS_META_PAGE_HEIGHT, static_cast<int>(image.height() / images.size()));
+        }
+      }
       VipsAccess access = baton->input->access;
       image = sharp::EnsureColourspace(image, baton->colourspacePipeline);
 
@@ -340,7 +372,7 @@ class PipelineWorker : public Napi::AsyncWorker {
       }
 
       // Flatten image to remove alpha channel
-      if (baton->flatten && sharp::HasAlpha(image)) {
+      if (baton->flatten && image.has_alpha()) {
         image = sharp::Flatten(image, baton->flattenBackground);
       }
 
@@ -360,12 +392,12 @@ class PipelineWorker : public Napi::AsyncWorker {
       bool const shouldSharpen = baton->sharpenSigma != 0.0;
       bool const shouldComposite = !baton->composite.empty();
 
-      if (shouldComposite && !sharp::HasAlpha(image)) {
+      if (shouldComposite && !image.has_alpha()) {
         image = sharp::EnsureAlpha(image, 1);
       }
 
       VipsBandFormat premultiplyFormat = image.format();
-      bool const shouldPremultiplyAlpha = sharp::HasAlpha(image) &&
+      bool const shouldPremultiplyAlpha = image.has_alpha() &&
         (shouldResize || shouldBlur || shouldConv || shouldSharpen);
 
       if (shouldPremultiplyAlpha) {
@@ -693,9 +725,7 @@ class PipelineWorker : public Napi::AsyncWorker {
           }
           // Ensure image to composite is sRGB with unpremultiplied alpha
           compositeImage = compositeImage.colourspace(VIPS_INTERPRETATION_sRGB);
-          if (!sharp::HasAlpha(compositeImage)) {
-            compositeImage = sharp::EnsureAlpha(compositeImage, 1);
-          }
+          compositeImage = sharp::EnsureAlpha(compositeImage, 1);
           if (composite->premultiplied) compositeImage = compositeImage.unpremultiply();
           // Calculate position
           int left;
@@ -796,7 +826,7 @@ class PipelineWorker : public Napi::AsyncWorker {
       // Extract channel
       if (baton->extractChannel > -1) {
         if (baton->extractChannel >= image.bands()) {
-          if (baton->extractChannel == 3 && sharp::HasAlpha(image)) {
+          if (baton->extractChannel == 3 && image.has_alpha()) {
             baton->extractChannel = image.bands() - 1;
           } else {
             (baton->err)
@@ -1020,7 +1050,7 @@ class PipelineWorker : public Napi::AsyncWorker {
         } else if (baton->formatOut == "dz") {
           // Write DZ to buffer
           baton->tileContainer = VIPS_FOREIGN_DZ_CONTAINER_ZIP;
-          if (!sharp::HasAlpha(image)) {
+          if (!image.has_alpha()) {
             baton->tileBackground.pop_back();
           }
           image = sharp::StaySequential(image, baton->tileAngle != 0);
@@ -1069,6 +1099,7 @@ class PipelineWorker : public Napi::AsyncWorker {
           // Unsupported output format
           (baton->err).append("Unsupported output format ");
           if (baton->formatOut == "input") {
+            (baton->err).append("when trying to match input format of ");
             (baton->err).append(ImageTypeId(inputImageType));
           } else {
             (baton->err).append(baton->formatOut);
@@ -1223,7 +1254,7 @@ class PipelineWorker : public Napi::AsyncWorker {
           if (isDzZip) {
             baton->tileContainer = VIPS_FOREIGN_DZ_CONTAINER_ZIP;
           }
-          if (!sharp::HasAlpha(image)) {
+          if (!image.has_alpha()) {
             baton->tileBackground.pop_back();
           }
           image = sharp::StaySequential(image, baton->tileAngle != 0);
@@ -1495,6 +1526,14 @@ Napi::Value pipeline(const Napi::CallbackInfo& info) {
 
   // Input
   baton->input = sharp::CreateInputDescriptor(options.Get("input").As<Napi::Object>());
+  // Join images together
+  if (sharp::HasAttr(options, "join")) {
+    Napi::Array join = options.Get("join").As<Napi::Array>();
+    for (unsigned int i = 0; i < join.Length(); i++) {
+      baton->join.push_back(
+        sharp::CreateInputDescriptor(join.Get(i).As<Napi::Object>()));
+    }
+  }
   // Extract image options
   baton->topOffsetPre = sharp::AttrAsInt32(options, "topOffsetPre");
   baton->leftOffsetPre = sharp::AttrAsInt32(options, "leftOffsetPre");

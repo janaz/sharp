@@ -8,6 +8,12 @@ Requires libvips v8.16.0
 
 ### v0.34.0 - TBD
 
+* Breaking: Support array of input images to be joined or animated.
+  [#1580](https://github.com/lovell/sharp/issues/1580)
+
+* Breaking: Ensure `removeAlpha` removes all alpha channels.
+  [#2266](https://github.com/lovell/sharp/issues/2266)
+
 * Breaking: Support `info.size` on wide-character systems via upgrade to C++17.
   [#3943](https://github.com/lovell/sharp/issues/3943)
 
@@ -33,6 +39,10 @@ Requires libvips v8.16.0
 * Add `pdfBackground` constructor property.
   [#4207](https://github.com/lovell/sharp/pull/4207)
   [@calebmer](https://github.com/calebmer)
+
+* Add support for RGBE images. Requires libvips compiled with radiance support.
+  [#4316](https://github.com/lovell/sharp/pull/4316)
+  [@florentzabera](https://github.com/florentzabera)
 
 ## v0.33 - *gauge*
 

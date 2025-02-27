@@ -119,7 +119,7 @@ Napi::Value format(const Napi::CallbackInfo& info) {
   Napi::Object format = Napi::Object::New(env);
   for (std::string const f : {
     "jpeg", "png", "webp", "tiff", "magick", "openslide", "dz",
-    "ppm", "fits", "gif", "svg", "heif", "pdf", "vips", "jp2k", "jxl"
+    "ppm", "fits", "gif", "svg", "heif", "pdf", "vips", "jp2k", "jxl", "rad"
   }) {
     // Input
     const VipsObjectClass *oc = vips_class_find("VipsOperation", (f + "load").c_str());
@@ -233,10 +233,10 @@ Napi::Value _maxColourDistance(const Napi::CallbackInfo& info) {
   double maxColourDistance;
   try {
     // Premultiply and remove alpha
-    if (sharp::HasAlpha(image1)) {
+    if (image1.has_alpha()) {
       image1 = image1.premultiply().extract_band(1, VImage::option()->set("n", image1.bands() - 1));
     }
-    if (sharp::HasAlpha(image2)) {
+    if (image2.has_alpha()) {
       image2 = image2.premultiply().extract_band(1, VImage::option()->set("n", image2.bands() - 1));
     }
     // Calculate colour distance

@@ -160,10 +160,30 @@ namespace sharp {
         descriptor->textWrap = AttrAsEnum<VipsTextWrap>(input, "textWrap", VIPS_TYPE_TEXT_WRAP);
       }
     }
+    // Join images together
+    if (HasAttr(input, "joinAnimated")) {
+      descriptor->joinAnimated = AttrAsBool(input, "joinAnimated");
+    }
+    if (HasAttr(input, "joinAcross")) {
+      descriptor->joinAcross = AttrAsUint32(input, "joinAcross");
+    }
+    if (HasAttr(input, "joinShim")) {
+      descriptor->joinShim = AttrAsUint32(input, "joinShim");
+    }
+    if (HasAttr(input, "joinBackground")) {
+      descriptor->joinBackground = AttrAsVectorOfDouble(input, "joinBackground");
+    }
+    if (HasAttr(input, "joinHalign")) {
+      descriptor->joinHalign = AttrAsEnum<VipsAlign>(input, "joinHalign", VIPS_TYPE_ALIGN);
+    }
+    if (HasAttr(input, "joinValign")) {
+      descriptor->joinValign = AttrAsEnum<VipsAlign>(input, "joinValign", VIPS_TYPE_ALIGN);
+    }
     // Limit input images to a given number of pixels, where pixels = width * height
     descriptor->limitInputPixels = static_cast<uint64_t>(AttrAsInt64(input, "limitInputPixels"));
-    // Allow switch from random to sequential access
-    descriptor->access = AttrAsBool(input, "sequentialRead") ? VIPS_ACCESS_SEQUENTIAL : VIPS_ACCESS_RANDOM;
+    if (HasAttr(input, "access")) {
+      descriptor->access = AttrAsBool(input, "sequentialRead") ? VIPS_ACCESS_SEQUENTIAL : VIPS_ACCESS_RANDOM;
+    }
     // Remove safety features and allow unlimited input
     descriptor->unlimited = AttrAsBool(input, "unlimited");
     // Use the EXIF orientation to auto orient the image
@@ -250,6 +270,7 @@ namespace sharp {
       case ImageType::FITS: id = "fits"; break;
       case ImageType::EXR: id = "exr"; break;
       case ImageType::JXL: id = "jxl"; break;
+      case ImageType::RAD: id = "rad"; break;
       case ImageType::VIPS: id = "vips"; break;
       case ImageType::RAW: id = "raw"; break;
       case ImageType::UNKNOWN: id = "unknown"; break;
@@ -296,6 +317,8 @@ namespace sharp {
     { "VipsForeignLoadOpenexr", ImageType::EXR },
     { "VipsForeignLoadJxlFile", ImageType::JXL },
     { "VipsForeignLoadJxlBuffer", ImageType::JXL },
+    { "VipsForeignLoadRadFile", ImageType::RAD },
+    { "VipsForeignLoadRadBuffer", ImageType::RAD },
     { "VipsForeignLoadVips", ImageType::VIPS },
     { "VipsForeignLoadVipsFile", ImageType::VIPS },
     { "VipsForeignLoadRaw", ImageType::RAW }
@@ -570,14 +593,6 @@ namespace sharp {
       image.set(VIPS_META_ICC_NAME, reinterpret_cast<VipsCallbackFn>(vips_area_free_cb), icc.first, icc.second);
     }
     return image;
-  }
-
-  /*
-    Does this image have an alpha channel?
-    Uses colour space interpretation with number of channels to guess this.
-  */
-  bool HasAlpha(VImage image) {
-    return image.has_alpha();
   }
 
   static void* RemoveExifCallback(VipsImage *image, char const *field, GValue *value, void *data) {
@@ -988,13 +1003,13 @@ namespace sharp {
       };
     }
     // Add alpha channel to alphaColour colour
-    if (colour[3] < 255.0 || HasAlpha(image)) {
+    if (colour[3] < 255.0 || image.has_alpha()) {
       alphaColour.push_back(colour[3] * multiplier);
     }
     // Ensure alphaColour colour uses correct colourspace
     alphaColour = sharp::GetRgbaAsColourspace(alphaColour, image.interpretation(), premultiply);
     // Add non-transparent alpha channel, if required
-    if (colour[3] < 255.0 && !HasAlpha(image)) {
+    if (colour[3] < 255.0 && !image.has_alpha()) {
       image = image.bandjoin(
         VImage::new_matrix(image.width(), image.height()).new_from_image(255 * multiplier).cast(image.format()));
     }
@@ -1002,10 +1017,10 @@ namespace sharp {
   }
 
   /*
-    Removes alpha channel, if any.
+    Removes alpha channels, if any.
   */
   VImage RemoveAlpha(VImage image) {
-    if (HasAlpha(image)) {
+    while (image.bands() > 1 && image.has_alpha()) {
       image = image.extract_band(0, VImage::option()->set("n", image.bands() - 1));
     }
     return image;
@@ -1015,7 +1030,7 @@ namespace sharp {
     Ensures alpha channel, if missing.
   */
   VImage EnsureAlpha(VImage image, double const value) {
-    if (!HasAlpha(image)) {
+    if (!image.has_alpha()) {
       std::vector<double> alpha;
       alpha.push_back(value * sharp::MaximumImageAlpha(image.interpretation()));
       image = image.bandjoin_const(alpha);
