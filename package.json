@@ -139,7 +139,7 @@
   "dependencies": {
     "color": "^4.2.3",
     "detect-libc": "^2.0.3",
-    "semver": "^7.6.3"
+    "semver": "^7.7.1"
   },
   "optionalDependencies": {
     "@revizly/sharp-libvips-linux-arm64": "1.0.10",
@@ -158,12 +158,12 @@
     "icc": "^3.0.0",
     "jsdoc-to-markdown": "^9.1.1",
     "license-checker": "^25.0.1",
-    "mocha": "^11.0.1",
-    "node-addon-api": "^8.3.0",
+    "mocha": "^11.1.0",
+    "node-addon-api": "^8.3.1",
     "nyc": "^17.1.0",
     "prebuild": "^13.0.1",
     "semistandard": "^17.0.0",
-    "tar-fs": "3.0.6",
+    "tar-fs": "^3.0.8",
     "tsd": "^0.31.2"
   },
   "license": "Apache-2.0",
@@ -171,7 +171,7 @@
     "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
   },
   "config": {
-    "libvips": ">=8.16.0"
+    "libvips": ">=8.16.1"
   },
   "funding": {
     "url": "https://opencollective.com/libvips"
