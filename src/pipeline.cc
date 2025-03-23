@@ -1032,7 +1032,7 @@ class PipelineWorker : public Napi::AsyncWorker {
           (baton->formatOut == "input" && inputImageType == sharp::ImageType::HEIF)) {
           // Write HEIF to buffer
           sharp::AssertImageTypeDimensions(image, sharp::ImageType::HEIF);
-          image = sharp::RemoveAnimationProperties(image).cast(VIPS_FORMAT_UCHAR);
+          image = sharp::RemoveAnimationProperties(image);
           VipsArea *area = reinterpret_cast<VipsArea*>(image.heifsave_buffer(VImage::option()
             ->set("keep", baton->keepMetadata)
             ->set("Q", baton->heifQuality)
@@ -1227,7 +1227,7 @@ class PipelineWorker : public Napi::AsyncWorker {
           (willMatchInput && inputImageType == sharp::ImageType::HEIF)) {
           // Write HEIF to file
           sharp::AssertImageTypeDimensions(image, sharp::ImageType::HEIF);
-          image = sharp::RemoveAnimationProperties(image).cast(VIPS_FORMAT_UCHAR);
+          image = sharp::RemoveAnimationProperties(image);
           image.heifsave(const_cast<char*>(baton->fileOut.data()), VImage::option()
             ->set("keep", baton->keepMetadata)
             ->set("Q", baton->heifQuality)
@@ -1705,6 +1705,8 @@ Napi::Value pipeline(const Napi::CallbackInfo& info) {
   }
   baton->withExifMerge = sharp::AttrAsBool(options, "withExifMerge");
   baton->timeoutSeconds = sharp::AttrAsUint32(options, "timeoutSeconds");
+  baton->loop = sharp::AttrAsUint32(options, "loop");
+  baton->delay = sharp::AttrAsInt32Vector(options, "delay");
   // Format-specific
   baton->jpegQuality = sharp::AttrAsUint32(options, "jpegQuality");
   baton->jpegProgressive = sharp::AttrAsBool(options, "jpegProgressive");
@@ -1774,13 +1776,6 @@ Napi::Value pipeline(const Napi::CallbackInfo& info) {
   baton->jxlEffort = sharp::AttrAsUint32(options, "jxlEffort");
   baton->jxlLossless = sharp::AttrAsBool(options, "jxlLossless");
   baton->rawDepth = sharp::AttrAsEnum<VipsBandFormat>(options, "rawDepth", VIPS_TYPE_BAND_FORMAT);
-  // Animated output properties
-  if (sharp::HasAttr(options, "loop")) {
-    baton->loop = sharp::AttrAsUint32(options, "loop");
-  }
-  if (sharp::HasAttr(options, "delay")) {
-    baton->delay = sharp::AttrAsInt32Vector(options, "delay");
-  }
   baton->tileSize = sharp::AttrAsUint32(options, "tileSize");
   baton->tileOverlap = sharp::AttrAsUint32(options, "tileOverlap");
   baton->tileAngle = sharp::AttrAsInt32(options, "tileAngle");
