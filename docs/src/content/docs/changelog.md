@@ -6,7 +6,18 @@ title: Changelog
 
 Requires libvips v8.16.1
 
-### v0.34.0 - TBD
+### v0.34.2 - TBD
+
+* Ensure `pdfBackground` constructor property is used.
+  [#4207](https://github.com/lovell/sharp/pull/4207)
+
+### v0.34.1 - 7th April 2025
+
+* TypeScript: Ensure new `autoOrient` property is optional.
+  [#4362](https://github.com/lovell/sharp/pull/4362)
+  [@styfle](https://github.com/styfle)
+
+### v0.34.0 - 4th April 2025
 
 * Breaking: Support array of input images to be joined or animated.
   [#1580](https://github.com/lovell/sharp/issues/1580)
@@ -44,6 +55,10 @@ Requires libvips v8.16.1
 * Add `pdfBackground` constructor property.
   [#4207](https://github.com/lovell/sharp/pull/4207)
   [@calebmer](https://github.com/calebmer)
+
+* Expose erode and dilate operations.
+  [#4243](https://github.com/lovell/sharp/pull/4243)
+  [@qpincon](https://github.com/qpincon)
 
 * Add support for RGBE images. Requires libvips compiled with radiance support.
   [#4316](https://github.com/lovell/sharp/pull/4316)

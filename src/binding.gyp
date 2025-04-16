@@ -19,7 +19,10 @@
         'type': 'shared_library',
         'defines': [
           '_VIPS_PUBLIC=__declspec(dllexport)',
-          '_ALLOW_KEYWORD_MACROS'
+          '_ALLOW_KEYWORD_MACROS',
+          'G_DISABLE_ASSERT',
+          'G_DISABLE_CAST_CHECKS',
+          'G_DISABLE_CHECKS'
         ],
         'sources': [
           '<(sharp_libvips_cplusplus_dir)/VConnection.cpp',
@@ -80,6 +83,9 @@
   }, {
     'target_name': 'sharp-<(platform_and_arch)',
     'defines': [
+      'G_DISABLE_ASSERT',
+      'G_DISABLE_CAST_CHECKS',
+      'G_DISABLE_CHECKS',
       'NAPI_VERSION=9',
       'NODE_ADDON_API_DISABLE_DEPRECATED',
       'NODE_API_SWALLOW_UNTHROWABLE_EXCEPTIONS'
@@ -179,6 +185,7 @@
                 '-Wl,-s',
                 '-Wl,--disable-new-dtags',
                 '-Wl,-z,nodelete',
+                '-Wl,-Bsymbolic-functions',
                 '-Wl,-rpath=\'$$ORIGIN/../../sharp-libvips-<(platform_and_arch)/lib\'',
                 '-Wl,-rpath=\'$$ORIGIN/../../../sharp-libvips-<(platform_and_arch)/<(sharp_libvips_version)/lib\'',
                 '-Wl,-rpath=\'$$ORIGIN/../../node_modules/@revizly/sharp-libvips-<(platform_and_arch)/lib\'',

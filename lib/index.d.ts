@@ -505,6 +505,22 @@ declare namespace sharp {
         blur(sigma?: number | boolean | BlurOptions): Sharp;
 
         /**
+         * Expand foreground objects using the dilate morphological operator.
+         * @param {Number} [width=1] dilation width in pixels.
+         * @throws {Error} Invalid parameters
+         * @returns A sharp instance that can be used to chain operations
+         */
+        dilate(width?: number): Sharp;
+
+        /**
+         * Shrink foreground objects using the erode morphological operator.
+         * @param {Number} [width=1] erosion width in pixels.
+         * @throws {Error} Invalid parameters
+         * @returns A sharp instance that can be used to chain operations
+         */
+        erode(width?: number): Sharp;
+
+        /**
          * Merge alpha transparency channel, if any, with background.
          * @param flatten true to enable and false to disable (defaults to true)
          * @returns A sharp instance that can be used to chain operations
@@ -955,7 +971,7 @@ declare namespace sharp {
          *
          * Using this option will remove the EXIF `Orientation` tag, if any.
          */
-        autoOrient?: boolean;
+        autoOrient?: boolean | undefined;
         /**
          *  When to abort processing of invalid pixel data, one of (in order of sensitivity):
          *  'none' (least), 'truncated', 'error' or 'warning' (most), highers level imply lower levels, invalid metadata will always abort. (optional, default 'warning')
@@ -1683,6 +1699,10 @@ declare namespace sharp {
         /** When using the attention crop strategy, the focal point of the cropped region */
         attentionX?: number | undefined;
         attentionY?: number | undefined;
+        /** Number of pages/frames contained within the image, with support for TIFF, HEIF, PDF, animated GIF and animated WebP */
+        pages?: number | undefined;
+        /** Number of pixels high each page in a multi-page image will be. */
+        pageHeight?: number | undefined;
     }
 
     interface AvailableFormatInfo {
