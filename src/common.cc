@@ -952,14 +952,6 @@ namespace sharp {
   }
 
   /*
-    Return the image alpha maximum. Useful for combining alpha bands. scRGB
-    images are 0 - 1 for image data, but the alpha is 0 - 255.
-  */
-  double MaximumImageAlpha(VipsInterpretation const interpretation) {
-    return Is16Bit(interpretation) ? 65535.0 : 255.0;
-  }
-
-  /*
     Convert RGBA value to another colourspace
   */
   std::vector<double> GetRgbaAsColourspace(std::vector<double> const rgba,
@@ -1001,16 +993,16 @@ namespace sharp {
         0.0722 * colour[2])
       };
     }
-    // Add alpha channel to alphaColour colour
+    // Add alpha channel(s) to alphaColour colour
     if (colour[3] < 255.0 || image.has_alpha()) {
-      alphaColour.push_back(colour[3] * multiplier);
+      int extraBands = image.bands() > 4 ? image.bands() - 3 : 1;
+      alphaColour.insert(alphaColour.end(), extraBands, colour[3] * multiplier);
     }
     // Ensure alphaColour colour uses correct colourspace
     alphaColour = sharp::GetRgbaAsColourspace(alphaColour, image.interpretation(), premultiply);
     // Add non-transparent alpha channel, if required
     if (colour[3] < 255.0 && !image.has_alpha()) {
-      image = image.bandjoin(
-        VImage::new_matrix(image.width(), image.height()).new_from_image(255 * multiplier).cast(image.format()));
+      image = image.bandjoin_const({ 255 * multiplier });
     }
     return std::make_tuple(image, alphaColour);
   }
@@ -1030,9 +1022,7 @@ namespace sharp {
   */
   VImage EnsureAlpha(VImage image, double const value) {
     if (!image.has_alpha()) {
-      std::vector<double> alpha;
-      alpha.push_back(value * sharp::MaximumImageAlpha(image.interpretation()));
-      image = image.bandjoin_const(alpha);
+      image = image.bandjoin_const({ value * vips_interpretation_max_alpha(image.interpretation()) });
     }
     return image;
   }

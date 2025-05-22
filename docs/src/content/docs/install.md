@@ -21,7 +21,7 @@ pnpm add sharp
 ```
 
 When using `pnpm`, you may need to add `sharp` to
-[ignoredBuiltDependencies](https://pnpm.io/package_json#pnpmignoredbuiltdependencies)
+[ignoredBuiltDependencies](https://pnpm.io/settings#ignoredbuiltdependencies)
 to silence warnings.
 
 ```sh
@@ -53,6 +53,7 @@ Ready-compiled sharp and libvips binaries are provided for use on the most commo
 * Linux x64 (glibc >= 2.26, musl >= 1.2.2, CPU with SSE4.2)
 * Windows x64
 * Windows x86
+* Windows ARM64 (experimental, CPU with ARMv8.4 required for all features)
 
 This provides support for the
 JPEG, PNG, WebP, AVIF (limited to 8-bit depth), TIFF, GIF and SVG (input) image formats.
@@ -93,7 +94,7 @@ Use the [supportedArchitectures](https://yarnpkg.com/configuration/yarnrc#suppor
 
 ### pnpm v8+
 
-Use the [supportedArchitectures](https://pnpm.io/package_json#pnpmsupportedarchitectures) configuration.
+Use the [supportedArchitectures](https://pnpm.io/settings#supportedarchitectures) configuration.
 
 ## Custom libvips
 
@@ -133,7 +134,7 @@ npm install --save node-addon-api node-gyp
 ```
 
 When using `pnpm`, you may need to add `sharp` to
-[onlyBuiltDependencies](https://pnpm.io/package_json#pnpmonlybuiltdependencies)
+[onlyBuiltDependencies](https://pnpm.io/settings#onlybuiltdependencies)
 to ensure the installation script can be run.
 
 For cross-compiling, the `--platform`, `--arch` and `--libc` npm flags
