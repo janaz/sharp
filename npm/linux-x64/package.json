@@ -1,6 +1,6 @@
 {
   "name": "@revizly/sharp-linux-x64",
-  "version": "0.34.1-revizly12",
+  "version": "0.34.1-revizly14",
   "description": "Prebuilt sharp for use with Linux (glibc) x64",
   "author": "Lovell Fuller <npm@lovell.info>",
   "homepage": "https://sharp.pixelplumbing.com",
@@ -15,7 +15,7 @@
   },
   "preferUnplugged": true,
   "optionalDependencies": {
-    "@revizly/sharp-libvips-linux-x64": "1.0.19"
+    "@revizly/sharp-libvips-linux-x64": "1.0.21"
   },
   "files": [
     "lib"
