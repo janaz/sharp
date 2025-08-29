@@ -242,6 +242,57 @@ const outputWithP3 = await sharp(input)
 ```
 
 
+## keepXmp
+> keepXmp() ⇒ <code>Sharp</code>
+
+Keep XMP metadata from the input image in the output image.
+
+
+**Since**: 0.34.3  
+**Example**  
+```js
+const outputWithXmp = await sharp(inputWithXmp)
+  .keepXmp()
+  .toBuffer();
+```
+
+
+## withXmp
+> withXmp(xmp) ⇒ <code>Sharp</code>
+
+Set XMP metadata in the output image.
+
+Supported by PNG, JPEG, WebP, and TIFF output.
+
+
+**Throws**:
+
+- <code>Error</code> Invalid parameters
+
+**Since**: 0.34.3  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| xmp | <code>string</code> | String containing XMP metadata to be embedded in the output image. |
+
+**Example**  
+```js
+const xmpString = `
+  <?xml version="1.0"?>
+  <x:xmpmeta xmlns:x="adobe:ns:meta/">
+    <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+      <rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/">
+        <dc:creator><rdf:Seq><rdf:li>John Doe</rdf:li></rdf:Seq></dc:creator>
+      </rdf:Description>
+    </rdf:RDF>
+  </x:xmpmeta>`;
+
+const data = await sharp(input)
+  .withXmp(xmpString)
+  .toBuffer();
+```
+
+
 ## keepMetadata
 > keepMetadata() ⇒ <code>Sharp</code>
 
@@ -496,6 +547,7 @@ The palette of the input image will be re-used if possible.
 | [options.dither] | <code>number</code> | <code>1.0</code> | level of Floyd-Steinberg error diffusion, between 0 (least) and 1 (most) |
 | [options.interFrameMaxError] | <code>number</code> | <code>0</code> | maximum inter-frame error for transparency, between 0 (lossless) and 32 |
 | [options.interPaletteMaxError] | <code>number</code> | <code>3</code> | maximum inter-palette error for palette reuse, between 0 and 256 |
+| [options.keepDuplicateFrames] | <code>boolean</code> | <code>false</code> | keep duplicate frames in the output instead of combining them |
 | [options.loop] | <code>number</code> | <code>0</code> | number of animation iterations, use 0 for infinite animation |
 | [options.delay] | <code>number</code> \| <code>Array.&lt;number&gt;</code> |  | delay(s) between animation frames (in milliseconds) |
 | [options.force] | <code>boolean</code> | <code>true</code> | force GIF output, otherwise attempt to use input format |

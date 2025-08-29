@@ -565,9 +565,9 @@ describe('Rotation', function () {
       .raw()
       .toBuffer();
 
-    assert.strictEqual(r, 60);
-    assert.strictEqual(g, 73);
-    assert.strictEqual(b, 52);
+    assert.strictEqual(r, 61);
+    assert.strictEqual(g, 74);
+    assert.strictEqual(b, 51);
   });
 
   it('Flip and rotate ordering', async () => {
@@ -633,6 +633,40 @@ describe('Rotation', function () {
     const { width, height } = await sharp(data).metadata();
     assert.strictEqual(width, 3);
     assert.strictEqual(height, 6);
+  });
+
+  it('Shrink-on-load with autoOrient', async () => {
+    const data = await sharp(fixtures.inputJpgWithLandscapeExif6)
+      .resize(8)
+      .autoOrient()
+      .avif({ effort: 0 })
+      .toBuffer();
+
+    const { width, height, orientation } = await sharp(data).metadata();
+    assert.strictEqual(width, 8);
+    assert.strictEqual(height, 6);
+    assert.strictEqual(orientation, undefined);
+  });
+
+  it('Auto-orient and rotate 45', async () => {
+    const data = await sharp(fixtures.inputJpgWithLandscapeExif2, { autoOrient: true })
+      .rotate(45)
+      .toBuffer();
+
+    const { width, height } = await sharp(data).metadata();
+    assert.strictEqual(width, 742);
+    assert.strictEqual(height, 742);
+  });
+
+  it('Auto-orient, extract and rotate 45', async () => {
+    const data = await sharp(fixtures.inputJpgWithLandscapeExif2, { autoOrient: true })
+      .extract({ left: 20, top: 20, width: 200, height: 100 })
+      .rotate(45)
+      .toBuffer();
+
+    const { width, height } = await sharp(data).metadata();
+    assert.strictEqual(width, 212);
+    assert.strictEqual(height, 212);
   });
 
   it('Invalid autoOrient throws', () =>

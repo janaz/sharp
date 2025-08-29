@@ -188,6 +188,8 @@ sharp(input)
     // of the image data in inputBuffer
   });
 
+sharp(input).resize({ kernel: 'mks2013' });
+
 transformer = sharp()
   .resize(200, 200, {
     fit: 'cover',
@@ -373,6 +375,8 @@ sharp(input)
   .gif({ reuse: false })
   .gif({ progressive: true })
   .gif({ progressive: false })
+  .gif({ keepDuplicateFrames: true })
+  .gif({ keepDuplicateFrames: false })
   .toBuffer({ resolveWithObject: true })
   .then(({ data, info }) => {
     console.log(data);
@@ -414,6 +418,7 @@ sharp({
     channels: 4,
     height: 25000,
     width: 25000,
+    pageHeight: 1000,
   },
   limitInputPixels: false,
 })
@@ -430,9 +435,6 @@ sharp('input.jpg').clahe({ width: 10, height: 10, maxSlope: 5 }).toFile('outfile
 
 // Support `unlimited` input option
 sharp('input.png', { unlimited: true }).resize(320, 240).toFile('outfile.png');
-
-// Support `subifd` input option for tiffs
-sharp('input.tiff', { subifd: 3 }).resize(320, 240).toFile('outfile.png');
 
 // Support creating with noise
 sharp({
@@ -690,6 +692,8 @@ sharp(input)
       k2: 'v2'
     }
   })
+  .keepXmp()
+  .withXmp('test')
   .keepIccProfile()
   .withIccProfile('filename')
   .withIccProfile('filename', { attach: false });
@@ -716,13 +720,29 @@ sharp(input).composite([
   }
 ])
 
+// Support format-specific input options
 const colour: sharp.Colour = '#fff';
 const color: sharp.Color = '#fff';
-sharp({ pdfBackground: colour });
-sharp({ pdfBackground: color });
+sharp({ pdf: { background: colour } });
+sharp({ pdf: { background: color } });
+sharp({ pdfBackground: colour }); // Deprecated
+sharp({ pdfBackground: color }); // Deprecated
+sharp({ tiff: { subifd: 3 } });
+sharp({ subifd: 3 }); // Deprecated
+sharp({ openSlide: { level: 0 } });
+sharp({ level: 0 }); // Deprecated
+sharp({ jp2: { oneshot: true } });
+sharp({ jp2: { oneshot: false } });
+sharp({ svg: { stylesheet: 'test' }});
+sharp({ svg: { highBitdepth: true }});
+sharp({ svg: { highBitdepth: false }});
 
-sharp({ jp2Oneshot: true });
-sharp({ jp2Oneshot: false });
+// Raw input options
+const raw: sharp.Raw = { width: 1, height: 1, channels: 3 };
+sharp({ raw });
+sharp({ raw: { ...raw, premultiplied: true } });
+sharp({ raw: { ...raw, premultiplied: false } });
+sharp({ raw: { ...raw, pageHeight: 1 } });
 
 sharp({ autoOrient: true });
 sharp({ autoOrient: false });

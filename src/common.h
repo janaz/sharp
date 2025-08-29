@@ -16,8 +16,8 @@
 
 #if (VIPS_MAJOR_VERSION < 8) || \
   (VIPS_MAJOR_VERSION == 8 && VIPS_MINOR_VERSION < 17) || \
-  (VIPS_MAJOR_VERSION == 8 && VIPS_MINOR_VERSION == 17 && VIPS_MICRO_VERSION < 0)
-#error "libvips version 8.17.0+ is required - please see https://sharp.pixelplumbing.com/install"
+  (VIPS_MAJOR_VERSION == 8 && VIPS_MINOR_VERSION == 17 && VIPS_MICRO_VERSION < 1)
+#error "libvips version 8.17.1+ is required - please see https://sharp.pixelplumbing.com/install"
 #endif
 
 #if defined(__has_include)
@@ -48,13 +48,13 @@ namespace sharp {
     int rawWidth;
     int rawHeight;
     bool rawPremultiplied;
+    int rawPageHeight;
     int pages;
     int page;
-    int level;
-    int subifd;
     int createChannels;
     int createWidth;
     int createHeight;
+    int createPageHeight;
     std::vector<double> createBackground;
     std::string createNoiseType;
     double createNoiseMean;
@@ -77,6 +77,10 @@ namespace sharp {
     std::vector<double> joinBackground;
     VipsAlign joinHalign;
     VipsAlign joinValign;
+    std::string svgStylesheet;
+    bool svgHighBitdepth;
+    int tiffSubifd;
+    int openSlideLevel;
     std::vector<double> pdfBackground;
     bool jp2Oneshot;
 
@@ -96,13 +100,13 @@ namespace sharp {
       rawWidth(0),
       rawHeight(0),
       rawPremultiplied(false),
+      rawPageHeight(0),
       pages(1),
       page(0),
-      level(0),
-      subifd(-1),
       createChannels(0),
       createWidth(0),
       createHeight(0),
+      createPageHeight(0),
       createBackground{ 0.0, 0.0, 0.0, 255.0 },
       createNoiseMean(0.0),
       createNoiseSigma(0.0),
@@ -121,6 +125,9 @@ namespace sharp {
       joinBackground{ 0.0, 0.0, 0.0, 255.0 },
       joinHalign(VIPS_ALIGN_LOW),
       joinValign(VIPS_ALIGN_LOW),
+      svgHighBitdepth(false),
+      tiffSubifd(-1),
+      openSlideLevel(0),
       pdfBackground{ 255.0, 255.0, 255.0, 255.0 },
       jp2Oneshot(false) {}
   };
@@ -162,6 +169,7 @@ namespace sharp {
     EXR,
     JXL,
     RAD,
+    DCRAW,
     VIPS,
     RAW,
     UNKNOWN,
@@ -218,14 +226,9 @@ namespace sharp {
   ImageType DetermineImageType(char const *file);
 
   /*
-    Does this image type support multiple pages?
+    Format-specific options builder
   */
-  bool ImageTypeSupportsPage(ImageType imageType);
-
-  /*
-    Does this image type support removal of safety limits?
-  */
-  bool ImageTypeSupportsUnlimited(ImageType imageType);
+  vips::VOption* GetOptionsForImageType(ImageType imageType, InputDescriptor *descriptor);
 
   /*
     Open an image from the given InputDescriptor (filesystem, compressed buffer, raw pixel data)

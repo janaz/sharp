@@ -1,6 +1,6 @@
 {
   "name": "@img/sharp-linux-ppc64",
-  "version": "0.34.2",
+  "version": "0.34.4-rc.1",
   "description": "Prebuilt sharp for use with Linux (glibc) ppc64",
   "author": "Lovell Fuller <npm@lovell.info>",
   "homepage": "https://sharp.pixelplumbing.com",
@@ -15,7 +15,7 @@
   },
   "preferUnplugged": true,
   "optionalDependencies": {
-    "@img/sharp-libvips-linux-ppc64": "1.2.0-rc.2"
+    "@img/sharp-libvips-linux-ppc64": "1.2.1"
   },
   "files": [
     "lib"
@@ -32,7 +32,7 @@
     "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
   },
   "config": {
-    "glibc": ">=2.31"
+    "glibc": ">=2.36"
   },
   "os": [
     "linux"

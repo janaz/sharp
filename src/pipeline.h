@@ -115,7 +115,8 @@ struct PipelineBaton {
   int angle;
   double rotationAngle;
   std::vector<double> rotationBackground;
-  bool rotateBeforePreExtract;
+  bool rotateBefore;
+  bool orientBefore;
   bool flip;
   bool flop;
   int extendTop;
@@ -169,6 +170,7 @@ struct PipelineBaton {
   double gifDither;
   double gifInterFrameMaxError;
   double gifInterPaletteMaxError;
+  bool gifKeepDuplicateFrames;
   bool gifReuse;
   bool gifProgressive;
   int tiffQuality;
@@ -201,6 +203,7 @@ struct PipelineBaton {
   std::string withIccProfile;
   std::unordered_map<std::string, std::string> withExif;
   bool withExifMerge;
+  std::string withXmp;
   int timeoutSeconds;
   std::vector<double> convKernel;
   int convKernelWidth;
@@ -342,6 +345,7 @@ struct PipelineBaton {
     gifDither(1.0),
     gifInterFrameMaxError(0.0),
     gifInterPaletteMaxError(3.0),
+    gifKeepDuplicateFrames(false),
     gifReuse(true),
     gifProgressive(false),
     tiffQuality(80),

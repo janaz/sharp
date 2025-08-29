@@ -44,25 +44,23 @@ where the overall height is the `pageHeight` multiplied by the number of `pages`
 | [options.ignoreIcc] | <code>number</code> | <code>false</code> | should the embedded ICC profile, if any, be ignored. |
 | [options.pages] | <code>number</code> | <code>1</code> | Number of pages to extract for multi-page input (GIF, WebP, TIFF), use -1 for all pages. |
 | [options.page] | <code>number</code> | <code>0</code> | Page number to start extracting from for multi-page input (GIF, WebP, TIFF), zero based. |
-| [options.subifd] | <code>number</code> | <code>-1</code> | subIFD (Sub Image File Directory) to extract for OME-TIFF, defaults to main image. |
-| [options.level] | <code>number</code> | <code>0</code> | level to extract from a multi-level input (OpenSlide), zero based. |
-| [options.pdfBackground] | <code>string</code> \| <code>Object</code> |  | Background colour to use when PDF is partially transparent. Parsed by the [color](https://www.npmjs.org/package/color) module to extract values for red, green, blue and alpha. Requires the use of a globally-installed libvips compiled with support for PDFium, Poppler, ImageMagick or GraphicsMagick. |
-| [options.jp2Oneshot] | <code>boolean</code> | <code>false</code> | Set to `true` to decode tiled JPEG 2000 images in a single operation, improving compatibility. |
 | [options.animated] | <code>boolean</code> | <code>false</code> | Set to `true` to read all frames/pages of an animated image (GIF, WebP, TIFF), equivalent of setting `pages` to `-1`. |
 | [options.raw] | <code>Object</code> |  | describes raw pixel input image data. See `raw()` for pixel ordering. |
 | [options.raw.width] | <code>number</code> |  | integral number of pixels wide. |
 | [options.raw.height] | <code>number</code> |  | integral number of pixels high. |
 | [options.raw.channels] | <code>number</code> |  | integral number of channels, between 1 and 4. |
 | [options.raw.premultiplied] | <code>boolean</code> |  | specifies that the raw input has already been premultiplied, set to `true`  to avoid sharp premultiplying the image. (optional, default `false`) |
+| [options.raw.pageHeight] | <code>number</code> |  | The pixel height of each page/frame for animated images, must be an integral factor of `raw.height`. |
 | [options.create] | <code>Object</code> |  | describes a new image to be created. |
 | [options.create.width] | <code>number</code> |  | integral number of pixels wide. |
 | [options.create.height] | <code>number</code> |  | integral number of pixels high. |
 | [options.create.channels] | <code>number</code> |  | integral number of channels, either 3 (RGB) or 4 (RGBA). |
 | [options.create.background] | <code>string</code> \| <code>Object</code> |  | parsed by the [color](https://www.npmjs.org/package/color) module to extract values for red, green, blue and alpha. |
+| [options.create.pageHeight] | <code>number</code> |  | The pixel height of each page/frame for animated images, must be an integral factor of `create.height`. |
 | [options.create.noise] | <code>Object</code> |  | describes a noise to be created. |
 | [options.create.noise.type] | <code>string</code> |  | type of generated noise, currently only `gaussian` is supported. |
-| [options.create.noise.mean] | <code>number</code> |  | mean of pixels in generated noise. |
-| [options.create.noise.sigma] | <code>number</code> |  | standard deviation of pixels in generated noise. |
+| [options.create.noise.mean] | <code>number</code> | <code>128</code> | Mean value of pixels in the generated noise. |
+| [options.create.noise.sigma] | <code>number</code> | <code>30</code> | Standard deviation of pixel values in the generated noise. |
 | [options.text] | <code>Object</code> |  | describes a new text image to be created. |
 | [options.text.text] | <code>string</code> |  | text to render as a UTF-8 string. It can contain Pango markup, for example `<i>Le</i>Monde`. |
 | [options.text.font] | <code>string</code> |  | font name to render with. |
@@ -82,6 +80,17 @@ where the overall height is the `pageHeight` multiplied by the number of `pages`
 | [options.join.background] | <code>string</code> \| <code>Object</code> |  | parsed by the [color](https://www.npmjs.org/package/color) module to extract values for red, green, blue and alpha. |
 | [options.join.halign] | <code>string</code> | <code>&quot;&#x27;left&#x27;&quot;</code> | horizontal alignment style for images joined horizontally (`'left'`, `'centre'`, `'center'`, `'right'`). |
 | [options.join.valign] | <code>string</code> | <code>&quot;&#x27;top&#x27;&quot;</code> | vertical alignment style for images joined vertically (`'top'`, `'centre'`, `'center'`, `'bottom'`). |
+| [options.tiff] | <code>Object</code> |  | Describes TIFF specific options. |
+| [options.tiff.subifd] | <code>number</code> | <code>-1</code> | Sub Image File Directory to extract for OME-TIFF, defaults to main image. |
+| [options.svg] | <code>Object</code> |  | Describes SVG specific options. |
+| [options.svg.stylesheet] | <code>string</code> |  | Custom CSS for SVG input, applied with a User Origin during the CSS cascade. |
+| [options.svg.highBitdepth] | <code>boolean</code> | <code>false</code> | Set to `true` to render SVG input at 32-bits per channel (128-bit) instead of 8-bits per channel (32-bit) RGBA. |
+| [options.pdf] | <code>Object</code> |  | Describes PDF specific options. Requires the use of a globally-installed libvips compiled with support for PDFium, Poppler, ImageMagick or GraphicsMagick. |
+| [options.pdf.background] | <code>string</code> \| <code>Object</code> |  | Background colour to use when PDF is partially transparent. Parsed by the [color](https://www.npmjs.org/package/color) module to extract values for red, green, blue and alpha. |
+| [options.openSlide] | <code>Object</code> |  | Describes OpenSlide specific options. Requires the use of a globally-installed libvips compiled with support for OpenSlide. |
+| [options.openSlide.level] | <code>number</code> | <code>0</code> | Level to extract from a multi-level input, zero based. |
+| [options.jp2] | <code>Object</code> |  | Describes JPEG 2000 specific options. Requires the use of a globally-installed libvips compiled with support for OpenJPEG. |
+| [options.jp2.oneshot] | <code>boolean</code> | <code>false</code> | Set to `true` to decode tiled JPEG 2000 images in a single operation, improving compatibility. |
 
 **Example**  
 ```js
