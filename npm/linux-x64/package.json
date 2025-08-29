@@ -1,6 +1,6 @@
 {
   "name": "@revizly/sharp-linux-x64",
-  "version": "0.34.4-revizly4",
+  "version": "0.34.4-revizly5",
   "description": "Prebuilt sharp for use with Linux (glibc) x64",
   "author": "Lovell Fuller <npm@lovell.info>",
   "homepage": "https://sharp.pixelplumbing.com",
