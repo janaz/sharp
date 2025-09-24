@@ -1,15 +1,14 @@
 // Copyright 2013 Lovell Fuller and others.
 // SPDX-License-Identifier: Apache-2.0
 
-'use strict';
-
-const assert = require('assert');
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
 
 const sharp = require('../../');
 const fixtures = require('../fixtures');
 
 describe('Sharpen', function () {
-  it('specific radius 10 (sigma 6)', function (done) {
+  it('specific radius 10 (sigma 6)', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .sharpen(6)
@@ -22,7 +21,7 @@ describe('Sharpen', function () {
       });
   });
 
-  it('specific radius 3 (sigma 1.5) and levels 0.5, 2.5', function (done) {
+  it('specific radius 3 (sigma 1.5) and levels 0.5, 2.5', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .sharpen(1.5, 0.5, 2.5)
@@ -35,7 +34,7 @@ describe('Sharpen', function () {
       });
   });
 
-  it('specific radius 5 (sigma 3.5) and levels 2, 4', function (done) {
+  it('specific radius 5 (sigma 3.5) and levels 2, 4', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .sharpen(3.5, 2, 4)
@@ -48,7 +47,7 @@ describe('Sharpen', function () {
       });
   });
 
-  it('sigma=3.5, m1=2, m2=4', (done) => {
+  it('sigma=3.5, m1=2, m2=4', (_t, done) => {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .sharpen({ sigma: 3.5, m1: 2, m2: 4 })
@@ -56,7 +55,7 @@ describe('Sharpen', function () {
       .then(data => fixtures.assertSimilar(fixtures.expected('sharpen-5-2-4.jpg'), data, done));
   });
 
-  it('sigma=3.5, m1=2, m2=4, x1=2, y2=5, y3=25', (done) => {
+  it('sigma=3.5, m1=2, m2=4, x1=2, y2=5, y3=25', (_t, done) => {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .sharpen({ sigma: 3.5, m1: 2, m2: 4, x1: 2, y2: 5, y3: 25 })
@@ -65,7 +64,7 @@ describe('Sharpen', function () {
   });
 
   if (!process.env.SHARP_TEST_WITHOUT_CACHE) {
-    it('specific radius/levels with alpha channel', function (done) {
+    it('specific radius/levels with alpha channel', function (_t, done) {
       sharp(fixtures.inputPngWithTransparency)
         .resize(320, 240)
         .sharpen(5, 4, 8)
@@ -80,7 +79,7 @@ describe('Sharpen', function () {
     });
   }
 
-  it('mild sharpen', function (done) {
+  it('mild sharpen', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .sharpen()
@@ -141,7 +140,7 @@ describe('Sharpen', function () {
     /Expected number between 0 and 1000000 for options\.y3 but received -1 of type number/
   ));
 
-  it('sharpened image is larger than non-sharpened', function (done) {
+  it('sharpened image is larger than non-sharpened', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .sharpen(false)

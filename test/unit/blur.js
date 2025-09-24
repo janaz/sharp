@@ -1,15 +1,14 @@
 // Copyright 2013 Lovell Fuller and others.
 // SPDX-License-Identifier: Apache-2.0
 
-'use strict';
-
-const assert = require('assert');
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
 
 const sharp = require('../../');
 const fixtures = require('../fixtures');
 
 describe('Blur', function () {
-  it('specific radius 1', function (done) {
+  it('specific radius 1', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .blur(1)
@@ -22,7 +21,7 @@ describe('Blur', function () {
       });
   });
 
-  it('specific radius 10', function (done) {
+  it('specific radius 10', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .blur(10)
@@ -35,7 +34,7 @@ describe('Blur', function () {
       });
   });
 
-  it('specific options.sigma 10', function (done) {
+  it('specific options.sigma 10', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .blur({ sigma: 10 })
@@ -48,7 +47,7 @@ describe('Blur', function () {
       });
   });
 
-  it('specific radius 0.3', function (done) {
+  it('specific radius 0.3', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .blur(0.3)
@@ -61,7 +60,7 @@ describe('Blur', function () {
       });
   });
 
-  it('mild blur', function (done) {
+  it('mild blur', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .blur()
@@ -80,7 +79,7 @@ describe('Blur', function () {
     });
   });
 
-  it('blurred image is smaller than non-blurred', function (done) {
+  it('blurred image is smaller than non-blurred', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .blur(false)

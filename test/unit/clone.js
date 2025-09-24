@@ -1,10 +1,9 @@
 // Copyright 2013 Lovell Fuller and others.
 // SPDX-License-Identifier: Apache-2.0
 
-'use strict';
-
-const fs = require('fs');
-const assert = require('assert');
+const fs = require('node:fs');
+const { afterEach, beforeEach, describe, it } = require('node:test');
+const assert = require('node:assert');
 
 const sharp = require('../../');
 const fixtures = require('../fixtures');
@@ -17,7 +16,7 @@ describe('Clone', function () {
     sharp.cache(true);
   });
 
-  it('Read from Stream and write to multiple Streams', function (done) {
+  it('Read from Stream and write to multiple Streams', function (_t, done) {
     let finishEventsExpected = 2;
     // Output stream 1
     const output1 = fixtures.path('output.multi-stream.1.jpg');

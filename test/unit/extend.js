@@ -1,16 +1,15 @@
 // Copyright 2013 Lovell Fuller and others.
 // SPDX-License-Identifier: Apache-2.0
 
-'use strict';
-
-const assert = require('assert');
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
 
 const sharp = require('../../');
 const fixtures = require('../fixtures');
 
 describe('Extend', function () {
   describe('extend all sides equally via a single value', function () {
-    it('JPEG', function (done) {
+    it('JPEG', function (_t, done) {
       sharp(fixtures.inputJpg)
         .resize(120)
         .extend(10)
@@ -22,7 +21,7 @@ describe('Extend', function () {
         });
     });
 
-    it('Animated WebP', function (done) {
+    it('Animated WebP', function (_t, done) {
       sharp(fixtures.inputWebPAnimated, { pages: -1 })
         .resize(120)
         .extend(10)
@@ -36,7 +35,7 @@ describe('Extend', function () {
   });
 
   ['background', 'copy', 'mirror', 'repeat'].forEach(extendWith => {
-    it(`extends all sides with animated WebP (${extendWith})`, function (done) {
+    it(`extends all sides with animated WebP (${extendWith})`, function (_t, done) {
       sharp(fixtures.inputWebPAnimated, { pages: -1 })
         .resize(120)
         .extend({
@@ -54,7 +53,7 @@ describe('Extend', function () {
         });
     });
 
-    it(`extend all sides equally with RGB (${extendWith})`, function (done) {
+    it(`extend all sides equally with RGB (${extendWith})`, function (_t, done) {
       sharp(fixtures.inputJpg)
         .resize(120)
         .extend({
@@ -73,7 +72,7 @@ describe('Extend', function () {
         });
     });
 
-    it(`extend sides unequally with RGBA (${extendWith})`, function (done) {
+    it(`extend sides unequally with RGBA (${extendWith})`, function (_t, done) {
       sharp(fixtures.inputPngWithTransparency16bit)
         .resize(120)
         .extend({
@@ -91,7 +90,7 @@ describe('Extend', function () {
         });
     });
 
-    it(`PNG with 2 channels (${extendWith})`, function (done) {
+    it(`PNG with 2 channels (${extendWith})`, function (_t, done) {
       sharp(fixtures.inputPngWithGreyAlpha)
         .extend({
           extendWith,
@@ -190,7 +189,7 @@ describe('Extend', function () {
     assert.doesNotThrow(() => sharp().extend({ top: 1, left: 2, bottom: 3 }));
   });
 
-  it('should add alpha channel before extending with a transparent Background', function (done) {
+  it('should add alpha channel before extending with a transparent Background', function (_t, done) {
     sharp(fixtures.inputJpgWithLandscapeExif1)
       .extend({
         bottom: 10,

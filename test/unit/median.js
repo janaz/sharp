@@ -1,9 +1,8 @@
 // Copyright 2013 Lovell Fuller and others.
 // SPDX-License-Identifier: Apache-2.0
 
-'use strict';
-
-const assert = require('assert');
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
 
 const sharp = require('../../');
 
@@ -43,7 +42,7 @@ describe('Median filter', function () {
       .raw()
       .toBuffer();
 
-    assert.deepStrictEqual(data.subarray(0, 6), Buffer.from([0, 3, 15, 15, 63, 127]));
+    assert.deepStrictEqual(data.subarray(0, 6), Buffer.from(row));
   });
 
   it('invalid radius', () => {

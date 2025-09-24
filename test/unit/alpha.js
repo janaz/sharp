@@ -1,14 +1,13 @@
 // Copyright 2013 Lovell Fuller and others.
 // SPDX-License-Identifier: Apache-2.0
 
-'use strict';
-
-const assert = require('assert');
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
 const fixtures = require('../fixtures');
 const sharp = require('../../');
 
 describe('Alpha transparency', function () {
-  it('Flatten to black', function (done) {
+  it('Flatten to black', function (_t, done) {
     sharp(fixtures.inputPngWithTransparency)
       .flatten()
       .resize(400, 300)
@@ -20,7 +19,7 @@ describe('Alpha transparency', function () {
       });
   });
 
-  it('Flatten to RGB orange', function (done) {
+  it('Flatten to RGB orange', function (_t, done) {
     sharp(fixtures.inputPngWithTransparency)
       .resize(400, 300)
       .flatten({
@@ -35,7 +34,7 @@ describe('Alpha transparency', function () {
       });
   });
 
-  it('Flatten to CSS/hex orange', function (done) {
+  it('Flatten to CSS/hex orange', function (_t, done) {
     sharp(fixtures.inputPngWithTransparency)
       .resize(400, 300)
       .flatten({ background: '#ff6600' })
@@ -48,7 +47,7 @@ describe('Alpha transparency', function () {
       });
   });
 
-  it('Flatten 16-bit PNG with transparency to orange', function (done) {
+  it('Flatten 16-bit PNG with transparency to orange', function (_t, done) {
     const output = fixtures.path('output.flatten-rgb16-orange.jpg');
     sharp(fixtures.inputPngWithTransparency16bit)
       .flatten({
@@ -64,10 +63,10 @@ describe('Alpha transparency', function () {
       });
   });
 
-  it('Do not flatten', function (done) {
+  it('Do not flatten', function (_t, done) {
     sharp(fixtures.inputPngWithTransparency)
       .flatten(false)
-      .toBuffer(function (err, data, info) {
+      .toBuffer(function (err, _data, info) {
         if (err) throw err;
         assert.strictEqual('png', info.format);
         assert.strictEqual(4, info.channels);
@@ -75,10 +74,10 @@ describe('Alpha transparency', function () {
       });
   });
 
-  it('Ignored for JPEG', function (done) {
+  it('Ignored for JPEG', function (_t, done) {
     sharp(fixtures.inputJpg)
       .flatten({ background: '#ff0000' })
-      .toBuffer(function (err, data, info) {
+      .toBuffer(function (err, _data, info) {
         if (err) throw err;
         assert.strictEqual('jpeg', info.format);
         assert.strictEqual(3, info.channels);
@@ -100,7 +99,7 @@ describe('Alpha transparency', function () {
 
   it('Enlargement with non-nearest neighbor interpolation shouldn’t cause dark edges', function () {
     const base = 'alpha-premultiply-enlargement-2048x1536-paper.png';
-    const actual = fixtures.path('output.' + base);
+    const actual = fixtures.path(`output.${base}`);
     const expected = fixtures.expected(base);
     return sharp(fixtures.inputPngAlphaPremultiplicationSmall)
       .resize(2048, 1536)
@@ -112,7 +111,7 @@ describe('Alpha transparency', function () {
 
   it('Reduction with non-nearest neighbor interpolation shouldn’t cause dark edges', function () {
     const base = 'alpha-premultiply-reduction-1024x768-paper.png';
-    const actual = fixtures.path('output.' + base);
+    const actual = fixtures.path(`output.${base}`);
     const expected = fixtures.expected(base);
     return sharp(fixtures.inputPngAlphaPremultiplicationLarge)
       .resize(1024, 768)

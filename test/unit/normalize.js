@@ -1,9 +1,8 @@
 // Copyright 2013 Lovell Fuller and others.
 // SPDX-License-Identifier: Apache-2.0
 
-'use strict';
-
-const assert = require('assert');
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
 
 const sharp = require('../../');
 const fixtures = require('../fixtures');
@@ -20,41 +19,41 @@ const assertNormalized = function (data) {
 };
 
 describe('Normalization', function () {
-  it('spreads rgb image values between 0 and 255', function (done) {
+  it('spreads rgb image values between 0 and 255', function (_t, done) {
     sharp(fixtures.inputJpgWithLowContrast)
       .normalise()
       .raw()
-      .toBuffer(function (err, data, info) {
+      .toBuffer(function (err, data) {
         if (err) throw err;
         assertNormalized(data);
         done();
       });
   });
 
-  it('spreads grayscaled image values between 0 and 255', function (done) {
+  it('spreads grayscaled image values between 0 and 255', function (_t, done) {
     sharp(fixtures.inputJpgWithLowContrast)
       .greyscale()
       .normalize()
       .raw()
-      .toBuffer(function (err, data, info) {
+      .toBuffer(function (err, data) {
         if (err) throw err;
         assertNormalized(data);
         done();
       });
   });
 
-  it('stretches greyscale images with alpha channel', function (done) {
+  it('stretches greyscale images with alpha channel', function (_t, done) {
     sharp(fixtures.inputPngWithGreyAlpha)
       .normalise()
       .raw()
-      .toBuffer(function (err, data, info) {
+      .toBuffer(function (err, data) {
         if (err) throw err;
         assertNormalized(data);
         done();
       });
   });
 
-  it('keeps an existing alpha channel', function (done) {
+  it('keeps an existing alpha channel', function (_t, done) {
     sharp(fixtures.inputPngWithTransparency)
       .resize(8, 8)
       .normalize()
@@ -70,7 +69,7 @@ describe('Normalization', function () {
       });
   });
 
-  it('keeps the alpha channel of greyscale images intact', function (done) {
+  it('keeps the alpha channel of greyscale images intact', function (_t, done) {
     sharp(fixtures.inputPngWithGreyAlpha)
       .resize(8, 8)
       .normalise()
@@ -86,33 +85,33 @@ describe('Normalization', function () {
       });
   });
 
-  it('does not alter images with only one color', function (done) {
+  it('does not alter images with only one color', function (_t, done) {
     const output = fixtures.path('output.unmodified-png-with-one-color.png');
     sharp(fixtures.inputPngWithOneColor)
       .normalize()
-      .toFile(output, function (err, info) {
+      .toFile(output, function (err) {
         if (err) done(err);
         fixtures.assertMaxColourDistance(output, fixtures.inputPngWithOneColor, 0);
         done();
       });
   });
 
-  it('works with 16-bit RGBA images', function (done) {
+  it('works with 16-bit RGBA images', function (_t, done) {
     sharp(fixtures.inputPngWithTransparency16bit)
       .normalise()
       .raw()
-      .toBuffer(function (err, data, info) {
+      .toBuffer(function (err, data) {
         if (err) throw err;
         assertNormalized(data);
         done();
       });
   });
 
-  it('should handle luminance range', function (done) {
+  it('should handle luminance range', function (_t, done) {
     sharp(fixtures.inputJpgWithLowContrast)
       .normalise({ lower: 10, upper: 70 })
       .raw()
-      .toBuffer(function (err, data, info) {
+      .toBuffer(function (err, data) {
         if (err) throw err;
         assertNormalized(data);
         done();

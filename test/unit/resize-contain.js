@@ -1,15 +1,14 @@
 // Copyright 2013 Lovell Fuller and others.
 // SPDX-License-Identifier: Apache-2.0
 
-'use strict';
-
-const assert = require('assert');
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
 
 const sharp = require('../../');
 const fixtures = require('../fixtures');
 
 describe('Resize fit=contain', function () {
-  it('Allows specifying the position as a string', function (done) {
+  it('Allows specifying the position as a string', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240, {
         fit: 'contain',
@@ -24,7 +23,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('JPEG within PNG, no alpha channel', function (done) {
+  it('JPEG within PNG, no alpha channel', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240, { fit: 'contain' })
       .png()
@@ -39,7 +38,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('JPEG within WebP, to include alpha channel', function (done) {
+  it('JPEG within WebP, to include alpha channel', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240, {
         fit: 'contain',
@@ -57,7 +56,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('PNG with alpha channel', function (done) {
+  it('PNG with alpha channel', function (_t, done) {
     sharp(fixtures.inputPngWithTransparency)
       .resize(50, 50, { fit: 'contain' })
       .toBuffer(function (err, data, info) {
@@ -71,7 +70,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('16-bit PNG with alpha channel', function (done) {
+  it('16-bit PNG with alpha channel', function (_t, done) {
     sharp(fixtures.inputPngWithTransparency16bit)
       .resize(32, 16, { fit: 'contain' })
       .toBuffer(function (err, data, info) {
@@ -85,7 +84,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('16-bit PNG with alpha channel onto RGBA', function (done) {
+  it('16-bit PNG with alpha channel onto RGBA', function (_t, done) {
     sharp(fixtures.inputPngWithTransparency16bit)
       .resize(32, 16, {
         fit: 'contain',
@@ -102,7 +101,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('PNG with 2 channels', function (done) {
+  it('PNG with 2 channels', function (_t, done) {
     sharp(fixtures.inputPngWithGreyAlpha)
       .resize(32, 16, {
         fit: 'contain',
@@ -119,7 +118,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('TIFF in LAB colourspace onto RGBA background', function (done) {
+  it('TIFF in LAB colourspace onto RGBA background', function (_t, done) {
     sharp(fixtures.inputTiffCielab)
       .resize(64, 128, {
         fit: 'contain',
@@ -137,7 +136,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Enlarge', function (done) {
+  it('Enlarge', function (_t, done) {
     sharp(fixtures.inputPngWithOneColor)
       .resize(320, 240, { fit: 'contain' })
       .toBuffer(function (err, data, info) {
@@ -152,7 +151,7 @@ describe('Resize fit=contain', function () {
   });
 
   describe('Animated WebP', function () {
-    it('Width only', function (done) {
+    it('Width only', function (_t, done) {
       sharp(fixtures.inputWebPAnimated, { pages: -1 })
         .resize(320, 240, {
           fit: 'contain',
@@ -169,7 +168,7 @@ describe('Resize fit=contain', function () {
         });
     });
 
-    it('Height only', function (done) {
+    it('Height only', function (_t, done) {
       sharp(fixtures.inputWebPAnimated, { pages: -1 })
         .resize(240, 320, {
           fit: 'contain',
@@ -195,7 +194,7 @@ describe('Resize fit=contain', function () {
     });
   });
 
-  it('Position horizontal top', function (done) {
+  it('Position horizontal top', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -213,7 +212,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal right top', function (done) {
+  it('Position horizontal right top', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -231,7 +230,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal right', function (done) {
+  it('Position horizontal right', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -249,7 +248,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal right bottom', function (done) {
+  it('Position horizontal right bottom', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -267,7 +266,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal bottom', function (done) {
+  it('Position horizontal bottom', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -285,7 +284,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal left bottom', function (done) {
+  it('Position horizontal left bottom', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -303,7 +302,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal left', function (done) {
+  it('Position horizontal left', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -321,7 +320,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal left top', function (done) {
+  it('Position horizontal left top', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -339,7 +338,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal north', function (done) {
+  it('Position horizontal north', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -357,7 +356,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal northeast', function (done) {
+  it('Position horizontal northeast', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -375,7 +374,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal east', function (done) {
+  it('Position horizontal east', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -393,7 +392,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal southeast', function (done) {
+  it('Position horizontal southeast', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -411,7 +410,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal south', function (done) {
+  it('Position horizontal south', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -429,7 +428,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal southwest', function (done) {
+  it('Position horizontal southwest', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -447,7 +446,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal west', function (done) {
+  it('Position horizontal west', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -465,7 +464,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal northwest', function (done) {
+  it('Position horizontal northwest', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -483,7 +482,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position horizontal center', function (done) {
+  it('Position horizontal center', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 100, {
         fit: sharp.fit.contain,
@@ -501,7 +500,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical top', function (done) {
+  it('Position vertical top', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -519,7 +518,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical right top', function (done) {
+  it('Position vertical right top', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -537,7 +536,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical right', function (done) {
+  it('Position vertical right', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -555,7 +554,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical right bottom', function (done) {
+  it('Position vertical right bottom', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -573,7 +572,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical bottom', function (done) {
+  it('Position vertical bottom', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -591,7 +590,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical left bottom', function (done) {
+  it('Position vertical left bottom', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -609,7 +608,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical left', function (done) {
+  it('Position vertical left', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -627,7 +626,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical left top', function (done) {
+  it('Position vertical left top', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -645,7 +644,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical north', function (done) {
+  it('Position vertical north', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -663,7 +662,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical northeast', function (done) {
+  it('Position vertical northeast', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -681,7 +680,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical east', function (done) {
+  it('Position vertical east', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -699,7 +698,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical southeast', function (done) {
+  it('Position vertical southeast', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -717,7 +716,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical south', function (done) {
+  it('Position vertical south', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -735,7 +734,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical southwest', function (done) {
+  it('Position vertical southwest', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -753,7 +752,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical west', function (done) {
+  it('Position vertical west', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -771,7 +770,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical northwest', function (done) {
+  it('Position vertical northwest', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,
@@ -789,7 +788,7 @@ describe('Resize fit=contain', function () {
       });
   });
 
-  it('Position vertical center', function (done) {
+  it('Position vertical center', function (_t, done) {
     sharp(fixtures.inputPngEmbed)
       .resize(200, 200, {
         fit: sharp.fit.contain,

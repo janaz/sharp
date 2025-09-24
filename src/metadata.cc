@@ -1,15 +1,17 @@
 // Copyright 2013 Lovell Fuller and others.
 // SPDX-License-Identifier: Apache-2.0
 
-#include <numeric>
-#include <vector>
 #include <cmath>
+#include <numeric>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <napi.h>
 #include <vips/vips8>
 
-#include "common.h"
-#include "metadata.h"
+#include "./common.h"
+#include "./metadata.h"
 
 static void* readPNGComment(VipsImage *image, const char *field, GValue *value, void *p);
 
@@ -261,11 +263,11 @@ class MetadataWorker : public Napi::AsyncWorker {
         info.Set("iptc", Napi::Buffer<char>::NewOrCopy(env, baton->iptc, baton->iptcLength, sharp::FreeCallback));
       }
       if (baton->xmpLength > 0) {
-        info.Set("xmp", Napi::Buffer<char>::NewOrCopy(env, baton->xmp, baton->xmpLength, sharp::FreeCallback));
         if (g_utf8_validate(static_cast<char const *>(baton->xmp), baton->xmpLength, nullptr)) {
           info.Set("xmpAsString",
             Napi::String::New(env, static_cast<char const *>(baton->xmp), baton->xmpLength));
         }
+        info.Set("xmp", Napi::Buffer<char>::NewOrCopy(env, baton->xmp, baton->xmpLength, sharp::FreeCallback));
       }
       if (baton->tifftagPhotoshopLength > 0) {
         info.Set("tifftagPhotoshop",

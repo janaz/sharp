@@ -12,28 +12,29 @@ If a package manager lockfile must support multiple platforms,
 please see the [cross-platform](#cross-platform) section
 to help decide which package manager is appropriate.
 
-```sh
+```sh frame="none"
 npm install sharp
 ```
 
-```sh
+```sh frame="none"
 pnpm add sharp
 ```
 
-When using `pnpm`, you may need to add `sharp` to
+When using `pnpm`, add `sharp` to
 [ignoredBuiltDependencies](https://pnpm.io/settings#ignoredbuiltdependencies)
 to silence warnings.
 
-```sh
+```sh frame="none"
 yarn add sharp
 ```
 
-```sh
+```sh frame="none"
 bun add sharp
 ```
 
-```sh
-deno run --allow-ffi ...
+```sh frame="none"
+deno add --quiet npm:sharp
+deno run --allow-env --allow-ffi --allow-read --allow-sys ...
 ```
 
 ## Prerequisites
@@ -75,7 +76,7 @@ npm `package-lock.json` files shared by multiple platforms can cause installatio
 Provides limited support via `--os`, `--cpu` and `--libc` flags.
 
 To support macOS with Intel x64 and ARM64 CPUs:
-```sh
+```sh frame="none"
 npm install --cpu=x64 --os=darwin sharp
 npm install --cpu=arm64 --os=darwin sharp
 ```
@@ -83,7 +84,7 @@ npm install --cpu=arm64 --os=darwin sharp
 When the cross-target is Linux, the C standard library must be specified.
 
 To support glibc (e.g. Debian) and musl (e.g. Alpine) Linux with Intel x64 CPUs:
-```sh
+```sh frame="none"
 npm install --cpu=x64 --os=linux --libc=glibc sharp
 npm install --cpu=x64 --os=linux --libc=musl sharp
 ```
@@ -129,7 +130,7 @@ Building from source requires:
 There is an install-time check for these dependencies.
 If `node-addon-api` or `node-gyp` cannot be found, try adding them via:
 
-```sh
+```sh frame="none"
 npm install --save node-addon-api node-gyp
 ```
 
@@ -152,19 +153,20 @@ Native text rendering is unsupported.
 
 [Tile-based output](/api-output#tile) is unsupported.
 
-```sh
+```sh frame="none"
 npm install --cpu=wasm32 sharp
 ```
 
 ## FreeBSD
 
-The `vips` package must be installed before `npm install` is run.
+The `vips` package must be installed before `npm install` is run,
+as well as the additional [building from source](#building-from-source) dependencies.
 
-```sh
+```sh frame="none"
 pkg install -y pkgconf vips
 ```
 
-```sh
+```sh frame="none"
 cd /usr/ports/graphics/vips/ && make install clean
 ```
 
@@ -213,7 +215,7 @@ Ensure sharp is excluded from bundling via the
 [externals](https://webpack.js.org/configuration/externals/)
 configuration.
 
-```js
+```js frame="none"
 externals: {
   'sharp': 'commonjs sharp'
 }
@@ -225,7 +227,7 @@ Ensure sharp is excluded from bundling via the
 [external](https://esbuild.github.io/api/#external)
 configuration.
 
-```js
+```js frame="none"
 buildSync({
   entryPoints: ['app.js'],
   bundle: true,
@@ -234,14 +236,14 @@ buildSync({
 })
 ```
 
-```sh
+```sh frame="none"
 esbuild app.js --bundle --platform=node --external:sharp
 ```
 
 For `serverless-esbuild`, ensure platform-specific binaries are installed
 via the `serverless.yml` configuration.
 
-```yaml
+```yaml frame="none"
 custom:
   esbuild:
     external:
@@ -259,7 +261,7 @@ Ensure `sharp` is unpacked from the ASAR archive file using the
 [asarUnpack](https://www.electron.build/app-builder-lib.interface.platformspecificbuildoptions#asarunpack)
 option.
 
-```json
+```json frame="none"
 {
   "build": {
     "asar": true,
@@ -276,7 +278,7 @@ Ensure `sharp` is unpacked from the ASAR archive file using the
 [unpack](https://js.electronforge.io/interfaces/_electron_forge_maker_squirrel.InternalOptions.Options.html#asar)
 option.
 
-```json
+```json frame="none"
 {
   "packagerConfig": {
     "asar": {
@@ -296,7 +298,7 @@ Ensure `sharp` is excluded from bundling via the
 [build.rollupOptions](https://vitejs.dev/config/build-options.html)
 configuration.
 
-```js
+```js frame="none"
 import { defineConfig } from 'vite';
 
 export default defineConfig({

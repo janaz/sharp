@@ -1,10 +1,9 @@
 // Copyright 2013 Lovell Fuller and others.
 // SPDX-License-Identifier: Apache-2.0
 
-'use strict';
-
-const fs = require('fs');
-const assert = require('assert');
+const fs = require('node:fs');
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
 
 const sharp = require('../../');
 const fixtures = require('../fixtures');
@@ -198,7 +197,7 @@ describe('GIF input', () => {
     );
   });
 
-  it('should work with streams when only animated is set', function (done) {
+  it('should work with streams when only animated is set', function (_t, done) {
     fs.createReadStream(fixtures.inputGifAnimated)
       .pipe(sharp({ animated: true }))
       .gif()
@@ -210,7 +209,7 @@ describe('GIF input', () => {
       });
   });
 
-  it('should work with streams when only pages is set', function (done) {
+  it('should work with streams when only pages is set', function (_t, done) {
     fs.createReadStream(fixtures.inputGifAnimated)
       .pipe(sharp({ pages: -1 }))
       .gif()

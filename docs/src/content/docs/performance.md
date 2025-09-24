@@ -13,11 +13,12 @@ environment variable, which defaults to 4.
 When using more than 4 physical CPU cores, set this environment variable
 before the Node.js process starts to increase the thread pool size.
 
-```sh
+```sh frame="none"
 export UV_THREADPOOL_SIZE="$(lscpu -p | egrep -v "^#" | sort -u -t, -k 2,4 | wc -l)"
 ```
 
-libvips uses a glib-managed thread pool to avoid the overhead of spawning new threads.
+libvips uses a shared thread pool to avoid the overhead of spawning new threads.
+The size of this thread pool will grow on demand and shrink when idle.
 
 The default number of threads used to concurrently process each image is the same as the number of CPU cores,
 except when using glibc-based Linux without jemalloc, where the default is `1` to help reduce memory fragmentation.
@@ -25,10 +26,10 @@ except when using glibc-based Linux without jemalloc, where the default is `1` t
 Use [`sharp.concurrency()`](/api-utility/#concurrency) to manage the number of threads per image.
 
 To reduce memory fragmentation when using the default Linux glibc memory allocator, set the
-[`MALLOC_ARENA_MAX`](https://www.gnu.org/software/libc/manual/html_node/Memory-Allocation-Tunables.html)
+[`MALLOC_ARENA_MAX`](https://sourceware.org/glibc/manual/latest/html_node/Memory-Allocation-Tunables.html)
 environment variable before the Node.js process starts to reduce the number of memory pools.
 
-```sh
+```sh frame="none"
 export MALLOC_ARENA_MAX="2"
 ```
 
@@ -130,7 +131,7 @@ Note: jimp does not support premultiply/unpremultiply.
 
 Requires Docker.
 
-```sh
+```sh frame="none"
 git clone https://github.com/lovell/sharp.git
 cd sharp/test/bench
 ./run-with-docker.sh

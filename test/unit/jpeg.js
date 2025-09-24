@@ -1,15 +1,14 @@
 // Copyright 2013 Lovell Fuller and others.
 // SPDX-License-Identifier: Apache-2.0
 
-'use strict';
-
-const assert = require('assert');
+const { describe, it } = require('node:test');
+const assert = require('node:assert');
 
 const sharp = require('../../');
 const fixtures = require('../fixtures');
 
 describe('JPEG', function () {
-  it('JPEG quality', function (done) {
+  it('JPEG quality', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .jpeg({ quality: 70 })
@@ -52,7 +51,7 @@ describe('JPEG', function () {
     });
   });
 
-  it('Progressive JPEG image', function (done) {
+  it('Progressive JPEG image', function (_t, done) {
     sharp(fixtures.inputJpg)
       .resize(320, 240)
       .jpeg({ progressive: false })
@@ -79,7 +78,7 @@ describe('JPEG', function () {
       });
   });
 
-  it('Without chroma subsampling generates larger file', function (done) {
+  it('Without chroma subsampling generates larger file', function (_t, done) {
     // First generate with chroma subsampling (default)
     sharp(fixtures.inputJpg)
       .resize(320, 240)
@@ -114,7 +113,7 @@ describe('JPEG', function () {
     });
   });
 
-  it('Trellis quantisation', function (done) {
+  it('Trellis quantisation', function (_t, done) {
     // First generate without
     sharp(fixtures.inputJpg)
       .resize(320, 240)
@@ -144,7 +143,7 @@ describe('JPEG', function () {
       });
   });
 
-  it('Overshoot deringing', function (done) {
+  it('Overshoot deringing', function (_t, done) {
     // First generate without
     sharp(fixtures.inputJpg)
       .resize(320, 240)
@@ -172,7 +171,7 @@ describe('JPEG', function () {
       });
   });
 
-  it('Optimise scans generates different output length', function (done) {
+  it('Optimise scans generates different output length', function (_t, done) {
     // First generate without
     sharp(fixtures.inputJpg)
       .resize(320, 240)
@@ -202,7 +201,7 @@ describe('JPEG', function () {
       });
   });
 
-  it('Optimise coding generates smaller output length', function (done) {
+  it('Optimise coding generates smaller output length', function (_t, done) {
     // First generate with optimize coding enabled (default)
     sharp(fixtures.inputJpg)
       .resize(320, 240)
@@ -232,7 +231,7 @@ describe('JPEG', function () {
       });
   });
 
-  it('Specifying quantisation table provides different JPEG', function (done) {
+  it('Specifying quantisation table provides different JPEG', function (_t, done) {
     // First generate with default quantisation table
     sharp(fixtures.inputJpg)
       .resize(320, 240)
@@ -263,7 +262,7 @@ describe('JPEG', function () {
       });
   });
 
-  it('Specifying quantization table provides different JPEG', function (done) {
+  it('Specifying quantization table provides different JPEG', function (_t, done) {
     // First generate with default quantization table
     sharp(fixtures.inputJpg)
       .resize(320, 240)

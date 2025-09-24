@@ -4,9 +4,23 @@ on:
   - pull_request
 permissions: {}
 jobs:
+  lint:
+    permissions:
+      contents: read
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+      - run: npm install --ignore-scripts
+      - run: npm run lint-cpp
+      - run: npm run lint-js
+      - run: npm run lint-types
   build-native:
     permissions:
       contents: read
+    needs: lint
     name: "build-${{ matrix.platform }} [Node.js ${{ matrix.nodejs_version_major }}] ${{ matrix.package && '[package]' }}"
     runs-on: ${{ matrix.os }}
     container: ${{ matrix.container }}
@@ -62,17 +76,14 @@ jobs:
           python-version: "3.12"
       - name: Dependencies (Node.js)
         if: "!contains(matrix.platform, 'linuxmusl')"
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.nodejs_version }}
           architecture: ${{ matrix.nodejs_arch }}
       - uses: actions/checkout@v4
-      - name: Install
-        run: npm install --build-from-source
-      - name: Test
-        run: npm test
-      - name: Populate npm package
-        if: matrix.package
+      - run: npm install --build-from-source
+      - run: npm run test-unit
+      - if: matrix.package
         run: npm run package-from-local-build
       - uses: actions/upload-artifact@v4
         if: matrix.package
@@ -95,7 +106,7 @@ jobs:
           path: npm
       - name: Create npm workspace tarball
         run: tar -vcaf npm-workspace.tar.xz --directory npm --exclude=from-local-build.js .
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '24'
       - name: Create release notes
@@ -111,7 +122,7 @@ jobs:
           bodyFile: release-notes.md
       - name: Publish platform-specific npm packages
         if: startsWith(github.ref, 'refs/tags/v')
-        run: cd npm && npm publish --workspaces --tag=${{ contains(github.ref, '-rc') && 'next' || 'latest' }} --dry-run
+        run: cd npm && npm publish --workspaces --tag=${{ contains(github.ref, '-rc') && 'next' || 'latest' }}
       - name: Publish sharp npm package
         if: startsWith(github.ref, 'refs/tags/v')
-        run: npm publish --tag=${{ contains(github.ref, '-rc') && 'next' || 'latest' }} --dry-run
+        run: npm publish --tag=${{ contains(github.ref, '-rc') && 'next' || 'latest' }}
