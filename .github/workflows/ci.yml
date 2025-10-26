@@ -81,7 +81,8 @@ jobs:
           node-version: ${{ matrix.nodejs_version }}
           architecture: ${{ matrix.nodejs_arch }}
       - uses: actions/checkout@v4
-      - run: npm install --build-from-source
+      - run: npm install
+      - run: npm run build
       - run: npm run test-unit
       - if: matrix.package
         run: npm run package-from-local-build

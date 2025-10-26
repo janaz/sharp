@@ -49,6 +49,7 @@ Ready-compiled sharp and libvips binaries are provided for use on the most commo
 * macOS ARM64
 * Linux ARM (glibc >= 2.31)
 * Linux ARM64 (glibc >= 2.26, musl >= 1.2.2)
+* Linux RISC-V 64-bit (glibc >= 2.41)
 * Linux ppc64 (glibc >= 2.36)
 * Linux s390x (glibc >= 2.36)
 * Linux x64 (glibc >= 2.26, musl >= 1.2.2, CPU with SSE4.2)
@@ -111,10 +112,11 @@ and on macOS when running Node.js under Rosetta.
 
 ## Building from source
 
-This module will be compiled from source at `npm install` time when:
+This module will be compiled from source when:
 
 * a globally-installed libvips is detected, or
-* when the `npm install --build-from-source` flag is used.
+* using `npm explore sharp -- npm run build`, or
+* using the deprecated `npm run --build-from-source` at `npm install` time.
 
 The logic to detect a globally-installed libvips can be skipped by setting the
 `SHARP_IGNORE_GLOBAL_LIBVIPS` (never try to use it) or

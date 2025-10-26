@@ -175,6 +175,7 @@ struct PipelineBaton {
   bool gifProgressive;
   int tiffQuality;
   VipsForeignTiffCompression tiffCompression;
+  bool tiffBigtiff;
   VipsForeignTiffPredictor tiffPredictor;
   bool tiffPyramid;
   int tiffBitdepth;
@@ -197,6 +198,7 @@ struct PipelineBaton {
   bool jxlLossless;
   VipsBandFormat rawDepth;
   std::string err;
+  bool errUseWarning;
   int keepMetadata;
   int withMetadataOrientation;
   double withMetadataDensity;
@@ -350,6 +352,7 @@ struct PipelineBaton {
     gifProgressive(false),
     tiffQuality(80),
     tiffCompression(VIPS_FOREIGN_TIFF_COMPRESSION_JPEG),
+    tiffBigtiff(false),
     tiffPredictor(VIPS_FOREIGN_TIFF_PREDICTOR_HORIZONTAL),
     tiffPyramid(false),
     tiffBitdepth(8),
@@ -371,6 +374,7 @@ struct PipelineBaton {
     jxlEffort(7),
     jxlLossless(false),
     rawDepth(VIPS_FORMAT_UCHAR),
+    errUseWarning(false),
     keepMetadata(0),
     withMetadataOrientation(-1),
     withMetadataDensity(0.0),

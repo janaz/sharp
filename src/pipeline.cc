@@ -1009,6 +1009,7 @@ class PipelineWorker : public Napi::AsyncWorker {
             ->set("Q", baton->tiffQuality)
             ->set("bitdepth", baton->tiffBitdepth)
             ->set("compression", baton->tiffCompression)
+            ->set("bigtiff", baton->tiffBigtiff)
             ->set("miniswhite", baton->tiffMiniswhite)
             ->set("predictor", baton->tiffPredictor)
             ->set("pyramid", baton->tiffPyramid)
@@ -1211,6 +1212,7 @@ class PipelineWorker : public Napi::AsyncWorker {
             ->set("Q", baton->tiffQuality)
             ->set("bitdepth", baton->tiffBitdepth)
             ->set("compression", baton->tiffCompression)
+            ->set("bigtiff", baton->tiffBigtiff)
             ->set("miniswhite", baton->tiffMiniswhite)
             ->set("predictor", baton->tiffPredictor)
             ->set("pyramid", baton->tiffPyramid)
@@ -1276,7 +1278,12 @@ class PipelineWorker : public Napi::AsyncWorker {
       if (what && what[0]) {
         (baton->err).append(what);
       } else {
-        (baton->err).append("Unknown error");
+        if (baton->input->failOn == VIPS_FAIL_ON_WARNING) {
+          (baton->err).append("Warning treated as error due to failOn setting");
+          baton->errUseWarning = true;
+        } else {
+          (baton->err).append("Unknown error");
+        }
       }
     }
     // Clean up libvips' per-request data and threads
@@ -1291,7 +1298,11 @@ class PipelineWorker : public Napi::AsyncWorker {
     // Handle warnings
     std::string warning = sharp::VipsWarningPop();
     while (!warning.empty()) {
-      debuglog.Call(Receiver().Value(), { Napi::String::New(env, warning) });
+      if (baton->errUseWarning) {
+        (baton->err).append("\n").append(warning);
+      } else {
+        debuglog.Call(Receiver().Value(), { Napi::String::New(env, warning) });
+      }
       warning = sharp::VipsWarningPop();
     }
 
@@ -1750,6 +1761,7 @@ Napi::Value pipeline(const Napi::CallbackInfo& info) {
   baton->gifReuse = sharp::AttrAsBool(options, "gifReuse");
   baton->gifProgressive = sharp::AttrAsBool(options, "gifProgressive");
   baton->tiffQuality = sharp::AttrAsUint32(options, "tiffQuality");
+  baton->tiffBigtiff = sharp::AttrAsBool(options, "tiffBigtiff");
   baton->tiffPyramid = sharp::AttrAsBool(options, "tiffPyramid");
   baton->tiffMiniswhite = sharp::AttrAsBool(options, "tiffMiniswhite");
   baton->tiffBitdepth = sharp::AttrAsUint32(options, "tiffBitdepth");
