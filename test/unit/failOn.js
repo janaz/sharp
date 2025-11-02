@@ -1,5 +1,7 @@
-// Copyright 2013 Lovell Fuller and others.
-// SPDX-License-Identifier: Apache-2.0
+/*!
+  Copyright 2013 Lovell Fuller and others.
+  SPDX-License-Identifier: Apache-2.0
+*/
 
 const { describe, it } = require('node:test');
 const assert = require('node:assert');
@@ -107,7 +109,7 @@ describe('failOn', () => {
   it('converts warnings to error for GeoTIFF', async () => {
     await assert.rejects(
       sharp(fixtures.inputTiffGeo).toBuffer(),
-      /Unknown field with tag 33550/
+      /Tag 34737/
     );
   });
 });
