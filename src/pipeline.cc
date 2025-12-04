@@ -455,12 +455,10 @@ class PipelineWorker : public Napi::AsyncWorker {
           std::tie(image, background) = sharp::ApplyAlpha(image, baton->resizeBackground, shouldPremultiplyAlpha);
 
           // Embed
-          int left;
-          int top;
-          std::tie(left, top) = sharp::CalculateEmbedPosition(
+          const auto& [left, top] = sharp::CalculateEmbedPosition(
             inputWidth, inputHeight, baton->width, baton->height, baton->position);
-          int width = std::max(inputWidth, baton->width);
-          int height = std::max(inputHeight, baton->height);
+          const int width = std::max(inputWidth, baton->width);
+          const int height = std::max(inputHeight, baton->height);
 
           image = nPages > 1
             ? sharp::EmbedMultiPage(image,
@@ -479,13 +477,10 @@ class PipelineWorker : public Napi::AsyncWorker {
           // Crop
           if (baton->position < 9) {
             // Gravity-based crop
-            int left;
-            int top;
-
-            std::tie(left, top) = sharp::CalculateCrop(
+            const auto& [left, top] = sharp::CalculateCrop(
               inputWidth, inputHeight, baton->width, baton->height, baton->position);
-            int width = std::min(inputWidth, baton->width);
-            int height = std::min(inputHeight, baton->height);
+            const int width = std::min(inputWidth, baton->width);
+            const int height = std::min(inputHeight, baton->height);
 
             image = nPages > 1
               ? sharp::CropMultiPage(image,
@@ -797,20 +792,14 @@ class PipelineWorker : public Napi::AsyncWorker {
         image = sharp::EnsureAlpha(image, baton->ensureAlpha);
       }
 
-      // Convert image to sRGB, if not already
+      // Ensure output colour space
       if (sharp::Is16Bit(image.interpretation())) {
         image = image.cast(VIPS_FORMAT_USHORT);
       }
       if (image.interpretation() != baton->colourspace) {
-        // Convert colourspace, pass the current known interpretation so libvips doesn't have to guess
         image = image.colourspace(baton->colourspace, VImage::option()->set("source_space", image.interpretation()));
-        // Transform colours from embedded profile to output profile
-        if ((baton->keepMetadata & VIPS_FOREIGN_KEEP_ICC) && baton->colourspacePipeline != VIPS_INTERPRETATION_CMYK &&
-          baton->withIccProfile.empty() && sharp::HasProfile(image)) {
-          image = image.icc_transform(processingProfile, VImage::option()
-            ->set("embedded", true)
-            ->set("depth", sharp::Is16Bit(image.interpretation()) ? 16 : 8)
-            ->set("intent", VIPS_INTENT_PERCEPTUAL));
+        if (inputProfile.first != nullptr && baton->withIccProfile.empty()) {
+          image = sharp::SetProfile(image, inputProfile);
         }
       }
 
@@ -845,8 +834,6 @@ class PipelineWorker : public Napi::AsyncWorker {
         } catch(...) {
           sharp::VipsWarningCallback(nullptr, G_LOG_LEVEL_WARNING, "Invalid profile", nullptr);
         }
-      } else if (baton->keepMetadata & VIPS_FOREIGN_KEEP_ICC) {
-        image = sharp::SetProfile(image, inputProfile);
       }
 
       // Negate the colours in the image
@@ -868,8 +855,8 @@ class PipelineWorker : public Napi::AsyncWorker {
         if (!baton->withExifMerge) {
           image = sharp::RemoveExif(image);
         }
-        for (const auto& s : baton->withExif) {
-          image.set(s.first.data(), s.second.data());
+        for (const auto& [key, value] : baton->withExif) {
+          image.set(key.c_str(), value.c_str());
         }
       }
       // XMP buffer
@@ -1448,11 +1435,11 @@ class PipelineWorker : public Napi::AsyncWorker {
   std::string
   AssembleSuffixString(std::string extname, std::vector<std::pair<std::string, std::string>> options) {
     std::string argument;
-    for (auto const &option : options) {
+    for (const auto& [key, value] : options) {
       if (!argument.empty()) {
         argument += ",";
       }
-      argument += option.first + "=" + option.second;
+      argument += key + "=" + value;
     }
     return extname + "[" + argument + "]";
   }

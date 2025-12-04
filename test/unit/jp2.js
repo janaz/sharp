@@ -45,19 +45,19 @@ describe('JP2 output', () => {
           assert.strictEqual('png', info.format);
           assert.strictEqual(8, info.width);
           assert.strictEqual(15, info.height);
-          assert.strictEqual(4, info.channels);
+          assert.strictEqual(3, info.channels);
         });
     });
 
-    it('JP2 quality', function (done) {
+    it('JP2 quality', (_t, done) => {
       sharp(fixtures.inputJp2)
         .resize(320, 240)
         .jp2({ quality: 70 })
-        .toBuffer(function (err, buffer70) {
+        .toBuffer((err, buffer70) => {
           if (err) throw err;
           sharp(fixtures.inputJp2)
             .resize(320, 240)
-            .toBuffer(function (err, buffer80) {
+            .toBuffer((err, buffer80) => {
               if (err) throw err;
               assert(buffer70.length < buffer80.length);
               done();
@@ -65,12 +65,12 @@ describe('JP2 output', () => {
         });
     });
 
-    it('Without chroma subsampling generates larger file', function (done) {
+    it('Without chroma subsampling generates larger file', (_t, done) => {
       // First generate with chroma subsampling (default)
       sharp(fixtures.inputJp2)
         .resize(320, 240)
         .jp2({ chromaSubsampling: '4:2:0' })
-        .toBuffer(function (err, withChromaSubsamplingData, withChromaSubsamplingInfo) {
+        .toBuffer((err, withChromaSubsamplingData, withChromaSubsamplingInfo) => {
           if (err) throw err;
           assert.strictEqual(true, withChromaSubsamplingData.length > 0);
           assert.strictEqual(withChromaSubsamplingData.length, withChromaSubsamplingInfo.size);
@@ -81,7 +81,7 @@ describe('JP2 output', () => {
           sharp(fixtures.inputJp2)
             .resize(320, 240)
             .jp2({ chromaSubsampling: '4:4:4' })
-            .toBuffer(function (err, withoutChromaSubsamplingData, withoutChromaSubsamplingInfo) {
+            .toBuffer((err, withoutChromaSubsamplingData, withoutChromaSubsamplingInfo) => {
               if (err) throw err;
               assert.strictEqual(true, withoutChromaSubsamplingData.length > 0);
               assert.strictEqual(withoutChromaSubsamplingData.length, withoutChromaSubsamplingInfo.size);
@@ -111,7 +111,7 @@ describe('JP2 output', () => {
     it('Invalid JP2 chromaSubsampling value throws error', () => {
       assert.throws(
         () => sharp().jp2({ chromaSubsampling: '4:2:2' }),
-        /Expected one of 4:2:0, 4:4:4 but received 4:2:2 of type string/
+        /Expected one of: 4:2:0, 4:4:4 for chromaSubsampling but received 4:2:2 of type string/
       );
     });
   }
