@@ -1,7 +1,7 @@
 {
   "name": "@revizly/sharp",
   "description": "High performance Node.js image processing, the fastest module to resize JPEG, PNG, WebP, GIF, AVIF and TIFF images",
-  "version": "0.35.0-revizly2",
+  "version": "0.35.0-revizly3",
   "author": "Lovell Fuller <npm@lovell.info>",
   "homepage": "https://sharp.pixelplumbing.com",
   "contributors": [
