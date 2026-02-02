@@ -86,6 +86,9 @@ let transformer = sharp()
   });
 readableStream.pipe(transformer).pipe(writableStream);
 
+sharp().toUint8Array();
+sharp().toUint8Array().then(({ data }) => data.byteLength);
+
 console.log(sharp.format);
 console.log(sharp.versions);
 
@@ -231,7 +234,7 @@ sharp(input)
 
 sharp(input)
   .resize(100, 100)
-  .toFormat('jpg')
+  .toFormat('avif')
   .toBuffer({ resolveWithObject: false })
   .then((outputBuffer: Buffer) => {
     // Resolves with a Buffer object when resolveWithObject is false
@@ -264,9 +267,7 @@ sharp(input)
 // Output to tif
 sharp(input)
   .resize(100, 100)
-  .toFormat('tif')
   .toFormat('tiff')
-  .toFormat(sharp.format.tif)
   .toFormat(sharp.format.tiff)
   .toBuffer();
 
@@ -362,7 +363,7 @@ sharp(input)
   .avif({ quality: 50, lossless: false, effort: 5, chromaSubsampling: '4:2:0' })
   .heif()
   .heif({})
-  .heif({ quality: 50, compression: 'hevc', lossless: false, effort: 5, chromaSubsampling: '4:2:0' })
+  .heif({ quality: 50, compression: 'hevc', lossless: false, effort: 5, chromaSubsampling: '4:2:0', tune: 'psnr' })
   .toBuffer({ resolveWithObject: true })
   .then(({ data, info }) => {
     console.log(data);
@@ -545,8 +546,8 @@ sharp('input.tiff').jxl({ decodingTier: 4 }).toFile('out.jxl');
 sharp('input.tiff').jxl({ lossless: true }).toFile('out.jxl');
 sharp('input.tiff').jxl({ effort: 7 }).toFile('out.jxl');
 
-// Support `minSize` and `mixed` webp options
-sharp('input.tiff').webp({ minSize: true, mixed: true }).toFile('out.gif');
+// Support webp options
+sharp('input.tiff').webp({ minSize: true, mixed: true, exact: true }).toFile('out.webp');
 
 // 'failOn' input param
 sharp('input.tiff', { failOn: 'none' });
@@ -598,7 +599,7 @@ const vertexSplitQuadraticBasisSpline: string = sharp.interpolators.vertexSplitQ
 // Triming
 sharp(input).trim({ background: '#000' }).toBuffer();
 sharp(input).trim({ threshold: 10, lineArt: true }).toBuffer();
-sharp(input).trim({ background: '#bf1942', threshold: 30 }).toBuffer();
+sharp(input).trim({ background: '#bf1942', threshold: 30, margin: 20 }).toBuffer();
 
 // Text input
 sharp({
@@ -771,3 +772,35 @@ sharp().erode();
 sharp().erode(1);
 sharp().dilate();
 sharp().dilate(1);
+
+sharp.format.dcraw;
+sharp.format.dz;
+sharp.format.fits;
+sharp.format.gif;
+sharp.format.heif;
+sharp.format.jp2;
+sharp.format.jpeg;
+sharp.format.jxl;
+sharp.format.magick;
+sharp.format.openslide;
+sharp.format.pdf;
+sharp.format.png;
+sharp.format.ppm;
+sharp.format.rad;
+sharp.format.raw;
+sharp.format.svg;
+sharp.format.tiff;
+sharp.format.vips;
+sharp.format.webp;
+// @ts-expect-error
+sharp.format.avif;
+// @ts-expect-error
+sharp.format.input;
+// @ts-expect-error
+sharp.format.jp2k;
+// @ts-expect-error
+sharp.format.jpg;
+// @ts-expect-error
+sharp.format.tif;
+// @ts-expect-error
+sharp.format.v;

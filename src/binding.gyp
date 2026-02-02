@@ -5,6 +5,7 @@
   'variables': {
     'vips_version': '<!(node -p "require(\'../lib/libvips\').minimumLibvipsVersion")',
     'platform_and_arch': '<!(node -p "require(\'../lib/libvips\').buildPlatformArch()")',
+    'sharp_version': '<!(node -p "require(\'../package.json\').version")',
     'sharp_libvips_version': '<!(node -p "require(\'../package.json\').optionalDependencies[\'@revizly/sharp-libvips-<(platform_and_arch)\']")',
     'sharp_libvips_yarn_locator': '<!(node -p "require(\'../lib/libvips\').yarnLocator()")',
     'sharp_libvips_include_dir': '<!(node -p "require(\'../lib/libvips\').buildSharpLibvipsIncludeDir()")',
@@ -20,6 +21,7 @@
         'defines': [
           '_VIPS_PUBLIC=__declspec(dllexport)',
           '_ALLOW_KEYWORD_MACROS',
+          '_HAS_EXCEPTIONS=1',
           'G_DISABLE_ASSERT',
           'G_DISABLE_CAST_CHECKS',
           'G_DISABLE_CHECKS'
@@ -81,7 +83,7 @@
       }]
     ]
   }, {
-    'target_name': 'sharp-<(platform_and_arch)',
+    'target_name': 'sharp-<(platform_and_arch)-<(sharp_version)',
     'defines': [
       'G_DISABLE_ASSERT',
       'G_DISABLE_CAST_CHECKS',
@@ -147,7 +149,8 @@
           ['OS == "win"', {
             'defines': [
               '_ALLOW_KEYWORD_MACROS',
-              '_FILE_OFFSET_BITS=64'
+              '_FILE_OFFSET_BITS=64',
+              '_HAS_EXCEPTIONS=1'
             ],
             'link_settings': {
               'libraries': [
@@ -282,7 +285,7 @@
     'target_name': 'copy-dll',
     'type': 'none',
     'dependencies': [
-      'sharp-<(platform_and_arch)'
+      'sharp-<(platform_and_arch)-<(sharp_version)'
     ],
     'conditions': [
       ['OS == "win"', {

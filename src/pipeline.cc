@@ -84,7 +84,7 @@ class PipelineWorker : public Napi::AsyncWorker {
       if (nPages == -1) {
         // Resolve the number of pages if we need to render until the end of the document
         nPages = image.get_typeof(VIPS_META_N_PAGES) != 0
-          ? image.get_int(VIPS_META_N_PAGES) - baton->input->page
+          ? image.get_int(VIPS_META_N_PAGES) - std::max(0, baton->input->page)
           : 1;
       }
 
@@ -153,7 +153,7 @@ class PipelineWorker : public Napi::AsyncWorker {
       if (baton->trimThreshold >= 0.0) {
         MultiPageUnsupported(nPages, "Trim");
         image = sharp::StaySequential(image);
-        image = sharp::Trim(image, baton->trimBackground, baton->trimThreshold, baton->trimLineArt);
+        image = sharp::Trim(image, baton->trimBackground, baton->trimThreshold, baton->trimLineArt, baton->trimMargin);
         baton->trimOffsetLeft = image.xoffset();
         baton->trimOffsetTop = image.yoffset();
       }
@@ -274,7 +274,7 @@ class PipelineWorker : public Napi::AsyncWorker {
           }
           sharp::SetDensity(image, baton->input->density);
           if (image.width() > 32767 || image.height() > 32767) {
-            throw vips::VError("Input SVG image will exceed 32767x32767 pixel limit when scaled");
+            throw std::runtime_error("Input SVG image will exceed 32767x32767 pixel limit when scaled");
           }
         } else if (inputImageType == sharp::ImageType::PDF) {
           if (baton->input->buffer != nullptr) {
@@ -290,11 +290,19 @@ class PipelineWorker : public Napi::AsyncWorker {
         }
       } else {
         if (inputImageType == sharp::ImageType::SVG && (image.width() > 32767 || image.height() > 32767)) {
-          throw vips::VError("Input SVG image exceeds 32767x32767 pixel limit");
+          throw std::runtime_error("Input SVG image exceeds 32767x32767 pixel limit");
         }
       }
       if (baton->input->autoOrient) {
         image = sharp::RemoveExifOrientation(image);
+      }
+      if (sharp::HasGainMap(image)) {
+        if (baton->withGainMap) {
+          image = image.uhdr2scRGB();
+        }
+        image = sharp::RemoveGainMap(image);
+      } else {
+        baton->withGainMap = false;
       }
 
       // Any pre-shrinking may already have been done
@@ -335,7 +343,7 @@ class PipelineWorker : public Napi::AsyncWorker {
         image.interpretation() != VIPS_INTERPRETATION_LABS &&
         image.interpretation() != VIPS_INTERPRETATION_GREY16 &&
         baton->colourspacePipeline != VIPS_INTERPRETATION_CMYK &&
-        !baton->input->ignoreIcc
+        !baton->input->ignoreIcc && !baton->withGainMap
       ) {
         // Convert to sRGB/P3 using embedded profile
         try {
@@ -667,7 +675,7 @@ class PipelineWorker : public Napi::AsyncWorker {
 
           // Verify within current dimensions
           if (compositeImage.width() > image.width() || compositeImage.height() > image.height()) {
-            throw vips::VError("Image to composite must have same dimensions or smaller");
+            throw std::runtime_error("Image to composite must have same dimensions or smaller");
           }
           // Check if overlay is tiled
           if (composite->tile) {
@@ -957,6 +965,7 @@ class PipelineWorker : public Napi::AsyncWorker {
             ->set("effort", baton->webpEffort)
             ->set("min_size", baton->webpMinSize)
             ->set("mixed", baton->webpMixed)
+            ->set("exact", baton->webpExact)
             ->set("alpha_q", baton->webpAlphaQuality)));
           baton->bufferOut = static_cast<char*>(area->data);
           baton->bufferOutLength = area->length;
@@ -1024,6 +1033,7 @@ class PipelineWorker : public Napi::AsyncWorker {
             ->set("compression", baton->heifCompression)
             ->set("effort", baton->heifEffort)
             ->set("bitdepth", baton->heifBitdepth)
+            ->set("tune", baton->heifTune.c_str())
             ->set("subsample_mode", baton->heifChromaSubsampling == "4:4:4"
               ? VIPS_FOREIGN_SUBSAMPLE_OFF : VIPS_FOREIGN_SUBSAMPLE_ON)
             ->set("lossless", baton->heifLossless)));
@@ -1076,20 +1086,19 @@ class PipelineWorker : public Napi::AsyncWorker {
           // Get raw image data
           baton->bufferOut = static_cast<char*>(image.write_to_memory(&baton->bufferOutLength));
           if (baton->bufferOut == nullptr) {
-            (baton->err).append("Could not allocate enough memory for raw output");
-            return Error();
+            throw std::runtime_error("Could not allocate enough memory for raw output");
           }
           baton->formatOut = "raw";
         } else {
           // Unsupported output format
-          (baton->err).append("Unsupported output format ");
+          auto unsupported = std::string("Unsupported output format ");
           if (baton->formatOut == "input") {
-            (baton->err).append("when trying to match input format of ");
-            (baton->err).append(ImageTypeId(inputImageType));
+            unsupported.append("when trying to match input format of ");
+            unsupported.append(ImageTypeId(inputImageType));
           } else {
-            (baton->err).append(baton->formatOut);
+            unsupported.append(baton->formatOut);
           }
-          return Error();
+          throw std::runtime_error(unsupported);
         }
       } else {
         // File output
@@ -1168,6 +1177,7 @@ class PipelineWorker : public Napi::AsyncWorker {
             ->set("effort", baton->webpEffort)
             ->set("min_size", baton->webpMinSize)
             ->set("mixed", baton->webpMixed)
+            ->set("exact", baton->webpExact)
             ->set("alpha_q", baton->webpAlphaQuality));
           baton->formatOut = "webp";
         } else if (baton->formatOut == "gif" || (mightMatchInput && isGif) ||
@@ -1223,6 +1233,7 @@ class PipelineWorker : public Napi::AsyncWorker {
             ->set("compression", baton->heifCompression)
             ->set("effort", baton->heifEffort)
             ->set("bitdepth", baton->heifBitdepth)
+            ->set("tune", baton->heifTune.c_str())
             ->set("subsample_mode", baton->heifChromaSubsampling == "4:4:4"
               ? VIPS_FOREIGN_SUBSAMPLE_OFF : VIPS_FOREIGN_SUBSAMPLE_ON)
             ->set("lossless", baton->heifLossless));
@@ -1262,7 +1273,7 @@ class PipelineWorker : public Napi::AsyncWorker {
           return Error();
         }
       }
-    } catch (vips::VError const &err) {
+    } catch (std::runtime_error const &err) {
       char const *what = err.what();
       if (what && what[0]) {
         (baton->err).append(what);
@@ -1294,7 +1305,6 @@ class PipelineWorker : public Napi::AsyncWorker {
       }
       warning = sharp::VipsWarningPop();
     }
-
     if (baton->err.empty()) {
       int width = baton->width;
       int height = baton->height;
@@ -1337,12 +1347,21 @@ class PipelineWorker : public Napi::AsyncWorker {
       }
 
       if (baton->bufferOutLength > 0) {
-        // Add buffer size to info
         info.Set("size", static_cast<uint32_t>(baton->bufferOutLength));
-        // Pass ownership of output data to Buffer instance
-        Napi::Buffer<char> data = Napi::Buffer<char>::NewOrCopy(env, static_cast<char*>(baton->bufferOut),
-          baton->bufferOutLength, sharp::FreeCallback);
-        Callback().Call(Receiver().Value(), { env.Null(), data, info });
+        if (baton->typedArrayOut) {
+          // ECMAScript ArrayBuffer with Uint8Array view
+          Napi::ArrayBuffer ab = Napi::ArrayBuffer::New(env, baton->bufferOutLength);
+          memcpy(ab.Data(), baton->bufferOut, baton->bufferOutLength);
+          sharp::FreeCallback(static_cast<char*>(baton->bufferOut), nullptr);
+          Napi::TypedArrayOf<uint8_t> data = Napi::TypedArrayOf<uint8_t>::New(env,
+            baton->bufferOutLength, ab, 0, napi_uint8_array);
+          Callback().Call(Receiver().Value(), { env.Null(), data, info });
+        } else {
+          // Node.js Buffer
+          Napi::Buffer<char> data = Napi::Buffer<char>::NewOrCopy(env, static_cast<char*>(baton->bufferOut),
+            baton->bufferOutLength, sharp::FreeCallback);
+          Callback().Call(Receiver().Value(), { env.Null(), data, info });
+        }
       } else {
         // Add file size to info
         if (baton->formatOut != "dz" || sharp::IsDzZip(baton->fileOut)) {
@@ -1386,7 +1405,7 @@ class PipelineWorker : public Napi::AsyncWorker {
 
   void MultiPageUnsupported(int const pages, std::string op) {
     if (pages > 1) {
-      throw vips::VError(op + " is not supported for multi-page images");
+      throw std::runtime_error(op + " is not supported for multi-page images");
     }
   }
 
@@ -1469,6 +1488,7 @@ class PipelineWorker : public Napi::AsyncWorker {
         {"preset", vips_enum_nick(VIPS_TYPE_FOREIGN_WEBP_PRESET, baton->webpPreset)},
         {"min_size", baton->webpMinSize ? "true" : "false"},
         {"mixed", baton->webpMixed ? "true" : "false"},
+        {"exact", baton->webpExact ? "true" : "false"},
         {"effort", std::to_string(baton->webpEffort)}
       };
       suffix = AssembleSuffixString(".webp", options);
@@ -1615,6 +1635,7 @@ Napi::Value pipeline(const Napi::CallbackInfo& info) {
   baton->trimBackground = sharp::AttrAsVectorOfDouble(options, "trimBackground");
   baton->trimThreshold = sharp::AttrAsDouble(options, "trimThreshold");
   baton->trimLineArt = sharp::AttrAsBool(options, "trimLineArt");
+  baton->trimMargin = sharp::AttrAsUint32(options, "trimMargin");
   baton->gamma = sharp::AttrAsDouble(options, "gamma");
   baton->gammaOut = sharp::AttrAsDouble(options, "gammaOut");
   baton->linearA = sharp::AttrAsVectorOfDouble(options, "linearA");
@@ -1692,6 +1713,7 @@ Napi::Value pipeline(const Napi::CallbackInfo& info) {
   // Output
   baton->formatOut = sharp::AttrAsStr(options, "formatOut");
   baton->fileOut = sharp::AttrAsStr(options, "fileOut");
+  baton->typedArrayOut = sharp::AttrAsBool(options, "typedArrayOut");
   baton->keepMetadata = sharp::AttrAsUint32(options, "keepMetadata");
   baton->withMetadataOrientation = sharp::AttrAsUint32(options, "withMetadataOrientation");
   baton->withMetadataDensity = sharp::AttrAsDouble(options, "withMetadataDensity");
@@ -1706,6 +1728,7 @@ Napi::Value pipeline(const Napi::CallbackInfo& info) {
   }
   baton->withExifMerge = sharp::AttrAsBool(options, "withExifMerge");
   baton->withXmp = sharp::AttrAsStr(options, "withXmp");
+  baton->withGainMap = sharp::AttrAsBool(options, "withGainMap");
   baton->timeoutSeconds = sharp::AttrAsUint32(options, "timeoutSeconds");
   baton->loop = sharp::AttrAsUint32(options, "loop");
   baton->delay = sharp::AttrAsInt32Vector(options, "delay");
@@ -1741,6 +1764,7 @@ Napi::Value pipeline(const Napi::CallbackInfo& info) {
   baton->webpEffort = sharp::AttrAsUint32(options, "webpEffort");
   baton->webpMinSize = sharp::AttrAsBool(options, "webpMinSize");
   baton->webpMixed = sharp::AttrAsBool(options, "webpMixed");
+  baton->webpExact = sharp::AttrAsBool(options, "webpExact");
   baton->gifBitdepth = sharp::AttrAsUint32(options, "gifBitdepth");
   baton->gifEffort = sharp::AttrAsUint32(options, "gifEffort");
   baton->gifDither = sharp::AttrAsDouble(options, "gifDither");
@@ -1775,6 +1799,7 @@ Napi::Value pipeline(const Napi::CallbackInfo& info) {
   baton->heifEffort = sharp::AttrAsUint32(options, "heifEffort");
   baton->heifChromaSubsampling = sharp::AttrAsStr(options, "heifChromaSubsampling");
   baton->heifBitdepth = sharp::AttrAsUint32(options, "heifBitdepth");
+  baton->heifTune = sharp::AttrAsStr(options, "heifTune");
   baton->jxlDistance = sharp::AttrAsDouble(options, "jxlDistance");
   baton->jxlDecodingTier = sharp::AttrAsUint32(options, "jxlDecodingTier");
   baton->jxlEffort = sharp::AttrAsUint32(options, "jxlEffort");

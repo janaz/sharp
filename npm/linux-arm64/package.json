@@ -18,6 +18,7 @@
     "@revizly/sharp-libvips-linux-arm64": "1.0.26"
   },
   "files": [
+    "index.cjs",
     "lib"
   ],
   "publishConfig": {
@@ -25,11 +26,11 @@
   },
   "type": "commonjs",
   "exports": {
-    "./sharp.node": "./lib/sharp-linux-arm64.node",
+    "./sharp.node": "./index.cjs",
     "./package": "./package.json"
   },
   "engines": {
-    "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+    "node": ">=20.9.0"
   },
   "config": {
     "glibc": ">=2.26"
