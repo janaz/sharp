@@ -1,11 +1,6 @@
 {
-<<<<<<< HEAD
   "name": "@revizly/sharp",
   "version": "0.34.1",
-=======
-  "name": "@img/sharp",
-  "version": "0.35.0-rc.0",
->>>>>>> upstream/0.35
   "private": "true",
   "workspaces": [
     "linux-arm64",
