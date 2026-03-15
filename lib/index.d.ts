@@ -28,6 +28,7 @@
 /// <reference types="node" />
 
 import type { Duplex } from 'node:stream';
+import { ColorLike } from '@img/colour';
 
 //#region Constructor functions
 
@@ -234,7 +235,7 @@ declare namespace sharp {
          * @param tint Parsed by the color module.
          * @returns A sharp instance that can be used to chain operations
          */
-        tint(tint: Colour | Color): Sharp;
+        tint(tint: ColorLike): Sharp;
 
         /**
          * Convert to 8-bit greyscale; 256 shades of grey.
@@ -685,6 +686,14 @@ declare namespace sharp {
         toUint8Array(): Promise<{ data: Uint8Array; info: OutputInfo }>;
 
         /**
+         * Set output density (DPI) in EXIF metadata.
+         * @param density Density in dots per inch (DPI).
+         * @returns A sharp instance that can be used to chain operations
+         * @throws {Error} Invalid parameters
+         */
+        withDensity(density: number): Sharp;
+
+        /**
          * Keep all EXIF metadata from the input image in the output image.
          * EXIF metadata is unsupported for TIFF output.
          * @returns A sharp instance that can be used to chain operations
@@ -993,7 +1002,7 @@ declare namespace sharp {
         unlimited?: boolean | undefined;
         /** Set this to false to use random access rather than sequential read. Some operations will do this automatically. */
         sequentialRead?: boolean | undefined;
-        /** Number representing the DPI for vector images in the range 1 to 100000. (optional, default 72) */
+        /** The DPI at which to render SVG and PDF images, in the range 1 to 100000. (optional, default 72) */
         density?: number | undefined;
         /** Should the embedded ICC profile, if any, be ignored. */
         ignoreIcc?: boolean | undefined;
@@ -1014,7 +1023,7 @@ declare namespace sharp {
         /** @deprecated Use {@link SharpOptions.tiff} instead */
         subifd?: number | undefined;
         /** @deprecated Use {@link SharpOptions.pdf} instead */
-        pdfBackground?: Colour | Color | undefined;
+        pdfBackground?: ColorLike | undefined;
         /** @deprecated Use {@link SharpOptions.openSlide} instead */
         level?: number | undefined;
         /** Set to `true` to read all frames/pages of an animated image (equivalent of setting `pages` to `-1`). (optional, default false) */
@@ -1073,7 +1082,7 @@ declare namespace sharp {
         /** Number of bands, 3 for RGB, 4 for RGBA */
         channels: CreateChannels;
         /** Parsed by the [color](https://www.npmjs.org/package/color) module to extract values for red, green, blue and alpha. */
-        background: Colour | Color;
+        background: ColorLike;
         /** Describes a noise to be created. */
         noise?: Noise | undefined;
         /** The height of each page/frame for animated images, must be an integral factor of the overall image height. */
@@ -1120,7 +1129,7 @@ declare namespace sharp {
         /** Space between images, in pixels. */
         shim?: number | undefined;
         /** Background colour. */
-        background?: Colour | Color | undefined;
+        background?: ColorLike | undefined;
         /** Horizontal alignment. */
         halign?: HorizontalAlignment | undefined;
         /** Vertical alignment. */
@@ -1141,7 +1150,7 @@ declare namespace sharp {
 
     interface PdfInputOptions {
         /** Background colour to use when PDF is partially transparent. Requires the use of a globally-installed libvips compiled with support for PDFium, Poppler, ImageMagick or GraphicsMagick. */
-        background?: Colour | Color | undefined;
+        background?: ColorLike | undefined;
     }
 
     interface OpenSlideInputOptions {
@@ -1510,7 +1519,7 @@ declare namespace sharp {
 
     interface RotateOptions {
         /** parsed by the color module to extract values for red, green, blue and alpha. (optional, default "#000000") */
-        background?: Colour | Color | undefined;
+        background?: ColorLike | undefined;
     }
 
     type Precision = 'integer' | 'float' | 'approximate';
@@ -1526,7 +1535,7 @@ declare namespace sharp {
 
     interface FlattenOptions {
         /** background colour, parsed by the color module, defaults to black. (optional, default {r:0,g:0,b:0}) */
-        background?: Colour | Color | undefined;
+        background?: ColorLike | undefined;
     }
 
     interface NegateOptions {
@@ -1551,7 +1560,7 @@ declare namespace sharp {
         /** Position, gravity or strategy to use when fit is cover or contain. (optional, default 'centre') */
         position?: number | string | undefined;
         /** Background colour when using a fit of contain, parsed by the color module, defaults to black without transparency. (optional, default {r:0,g:0,b:0,alpha:1}) */
-        background?: Colour | Color | undefined;
+        background?: ColorLike | undefined;
         /** The kernel to use for image reduction. (optional, default 'lanczos3') */
         kernel?: keyof KernelEnum | undefined;
         /** Do not enlarge if the width or height are already less than the specified dimensions, equivalent to GraphicsMagick's > geometry option. (optional, default false) */
@@ -1594,14 +1603,14 @@ declare namespace sharp {
         /** single pixel count to right edge (optional, default 0) */
         right?: number | undefined;
         /** background colour, parsed by the color module, defaults to black without transparency. (optional, default {r:0,g:0,b:0,alpha:1}) */
-        background?: Colour | Color | undefined;
+        background?: ColorLike | undefined;
         /** how the extension is done, one of: "background", "copy", "repeat", "mirror" (optional, default `'background'`) */
         extendWith?: ExtendWith | undefined;
     }
 
     interface TrimOptions {
         /** Background colour, parsed by the color module, defaults to that of the top-left pixel. (optional) */
-        background?: Colour | Color | undefined;
+        background?: ColorLike | undefined;
         /** Allowed difference from the above colour, a positive number. (optional, default 10) */
         threshold?: number | undefined;
         /** Does the input more closely resemble line art (e.g. vector) rather than being photographic? (optional, default false) */
@@ -1617,15 +1626,8 @@ declare namespace sharp {
     /** 1 for grayscale, 2 for grayscale + alpha, 3 for sRGB, 4 for CMYK or RGBA */
     type Channels = 1 | 2 | 3 | 4;
 
-    interface RGBA {
-        r?: number | undefined;
-        g?: number | undefined;
-        b?: number | undefined;
-        alpha?: number | undefined;
-    }
-
-    type Colour = string | RGBA;
-    type Color = Colour;
+    type Colour = ColorLike;
+    type Color = ColorLike;
 
     interface Kernel {
         /** width of the kernel in pixels. */
@@ -1691,7 +1693,7 @@ declare namespace sharp {
         /** Tile angle of rotation, must be a multiple of 90. (optional, default 0) */
         angle?: number | undefined;
         /** background colour, parsed by the color module, defaults to white without transparency. (optional, default {r:255,g:255,b:255,alpha:1}) */
-        background?: string | RGBA | undefined;
+        background?: ColorLike | undefined;
         /** How deep to make the pyramid, possible values are "onepixel", "onetile" or "one" (default based on layout) */
         depth?: string | undefined;
         /** Threshold to skip tile generation, a value 0 - 255 for 8-bit images or 0 - 65535 for 16-bit images */

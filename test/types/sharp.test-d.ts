@@ -1,7 +1,7 @@
 // biome-ignore-all lint/correctness/noUnusedFunctionParameters: types only test file
 // biome-ignore-all lint/correctness/noUnusedVariables: types only test file
 
-import sharp = require('../../');
+import sharp from '../../';
 
 import { createReadStream, createWriteStream } from 'node:fs';
 
@@ -52,6 +52,8 @@ sharp('input.png')
   .toFile('output.png', (err, info) => {
     // output.png is an image containing input.png along with all metadata(EXIF, ICC, XMP, IPTC) from input.png
   })
+
+sharp(input).withDensity(300);
 
 sharp('input.jpg')
   .resize(300, 200)
@@ -726,7 +728,7 @@ sharp(input).composite([
 
 // Support format-specific input options
 const colour: sharp.Colour = '#fff';
-const color: sharp.Color = '#fff';
+const color: sharp.Color = { l: 1, a: 2, b: 3 };
 sharp({ pdf: { background: colour } });
 sharp({ pdf: { background: color } });
 sharp({ pdfBackground: colour }); // Deprecated

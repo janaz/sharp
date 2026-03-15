@@ -110,6 +110,8 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
+      - name: Populate WebAssembly wrapper packages
+        run: npm run package-wasm-wrappers
       - name: Create release notes
         run: npm run package-release-notes
       - name: Create GitHub release for tag

@@ -103,6 +103,7 @@
     "test-leak": "./test/leak/leak.sh",
     "test-unit": "node --experimental-test-coverage test/unit.mjs",
     "package-from-local-build": "node npm/from-local-build.js",
+    "package-wasm-wrappers": "node npm/wasm-wrappers.js",
     "package-release-notes": "node npm/release-notes.js",
     "docs-build": "node docs/build.mjs",
     "docs-serve": "cd docs && npm start",
@@ -139,9 +140,9 @@
     "vips"
   ],
   "dependencies": {
-    "@img/colour": "^1.0.0",
+    "@img/colour": "^1.1.0",
     "detect-libc": "^2.1.2",
-    "semver": "^7.7.3"
+    "semver": "^7.7.4"
   },
   "optionalDependencies": {
     "@revizly/sharp-libvips-linux-arm64": "1.0.27",
@@ -150,17 +151,17 @@
     "@revizly/sharp-linux-x64": "0.35.0-revizly16"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.10",
+    "@biomejs/biome": "^2.4.4",
     "@cpplint/cli": "^0.1.0",
-    "@emnapi/runtime": "^1.7.1",
+    "@emnapi/runtime": "^1.8.1",
     "@revizly/sharp-libvips-dev": "1.0.27",
     "@types/node": "*",
-    "emnapi": "^1.7.1",
+    "emnapi": "^1.8.1",
     "exif-reader": "^2.0.3",
     "extract-zip": "^2.0.1",
     "icc": "^3.0.0",
     "node-addon-api": "^8.5.0",
-    "node-gyp": "^12.1.0",
+    "node-gyp": "^12.2.0",
     "tar-fs": "^3.1.1",
     "tsd": "^0.33.0"
   },
