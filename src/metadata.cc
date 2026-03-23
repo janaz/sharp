@@ -209,7 +209,7 @@ class MetadataWorker : public Napi::AsyncWorker {
     // Handle warnings
     std::string warning = sharp::VipsWarningPop();
     while (!warning.empty()) {
-      debuglog.MakeCallback(Receiver().Value(), { Napi::String::New(env, warning) });
+      debuglog.SHARP_CALLBACK_FN_NAME(Receiver().Value(), { Napi::String::New(env, warning) });
       warning = sharp::VipsWarningPop();
     }
 
@@ -344,9 +344,10 @@ class MetadataWorker : public Napi::AsyncWorker {
         }
         info.Set("comments", comments);
       }
-      Callback().MakeCallback(Receiver().Value(), { env.Null(), info });
+      Callback().SHARP_CALLBACK_FN_NAME(Receiver().Value(), { env.Null(), info });
     } else {
-      Callback().MakeCallback(Receiver().Value(), { Napi::Error::New(env, sharp::TrimEnd(baton->err)).Value() });
+      Callback().SHARP_CALLBACK_FN_NAME(Receiver().Value(),
+        { Napi::Error::New(env, sharp::TrimEnd(baton->err)).Value() });
     }
 
     delete baton->input;

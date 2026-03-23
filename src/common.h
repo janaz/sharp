@@ -19,14 +19,20 @@
 
 #if (VIPS_MAJOR_VERSION < 8) || \
   (VIPS_MAJOR_VERSION == 8 && VIPS_MINOR_VERSION < 18) || \
-  (VIPS_MAJOR_VERSION == 8 && VIPS_MINOR_VERSION == 18 && VIPS_MICRO_VERSION < 0)
-#error "libvips version 8.18.0+ is required - please see https://sharp.pixelplumbing.com/install"
+  (VIPS_MAJOR_VERSION == 8 && VIPS_MINOR_VERSION == 18 && VIPS_MICRO_VERSION < 1)
+#error "libvips version 8.18.1+ is required - please see https://sharp.pixelplumbing.com/install"
 #endif
 
 #if defined(__has_include)
 #if !__has_include(<filesystem>)
 #error "C++17 compiler required - please see https://sharp.pixelplumbing.com/install"
 #endif
+#endif
+
+#ifdef __EMSCRIPTEN__
+#define SHARP_CALLBACK_FN_NAME Call
+#else
+#define SHARP_CALLBACK_FN_NAME MakeCallback
 #endif
 
 using vips::VImage;

@@ -86,7 +86,7 @@ jobs:
       - run: npm run test-unit
       - if: matrix.package
         run: npm run package-from-local-build
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         if: matrix.package
         with:
           name: ${{ matrix.platform }}
@@ -101,8 +101,8 @@ jobs:
     needs:
       - build-native
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v7
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v8
         with:
           path: npm
       - name: Create npm workspace tarball
