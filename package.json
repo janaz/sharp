@@ -151,16 +151,16 @@
     "@revizly/sharp-linux-x64": "0.35.0-revizly24"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.8",
+    "@biomejs/biome": "^2.4.10",
     "@cpplint/cli": "^0.1.0",
-    "@emnapi/runtime": "^1.9.1",
+    "@emnapi/runtime": "^1.9.2",
     "@revizly/sharp-libvips-dev": "1.0.29",
     "@types/node": "*",
-    "emnapi": "^1.9.1",
+    "emnapi": "^1.9.2",
     "exif-reader": "^2.0.3",
     "extract-zip": "^2.0.1",
     "icc": "^3.0.0",
-    "node-addon-api": "^8.6.0",
+    "node-addon-api": "^8.7.0",
     "node-gyp": "^12.2.0",
     "tar-fs": "^3.1.2",
     "tsd": "^0.33.0"
@@ -170,7 +170,7 @@
     "node": ">=20.9.0"
   },
   "config": {
-    "libvips": ">=8.18.1"
+    "libvips": ">=8.18.2"
   },
   "funding": {
     "url": "https://opencollective.com/libvips"
