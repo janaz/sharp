@@ -82,7 +82,7 @@ jobs:
           architecture: ${{ matrix.nodejs_arch }}
       - uses: actions/checkout@v6
       - run: npm install
-      - run: npm run build
+      - run: npm run build:dist && npm run build
       - run: npm run test-unit
       - if: matrix.package
         run: npm run package-from-local-build
@@ -111,6 +111,8 @@ jobs:
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
+      - name: Populate distribution directory
+        run: npm run build:dist
       - name: Populate WebAssembly wrapper packages
         run: npm run package-wasm-wrappers
       - name: Create release notes
