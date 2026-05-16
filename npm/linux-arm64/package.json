@@ -1,6 +1,6 @@
 {
   "name": "@revizly/sharp-linux-arm64",
-  "version": "0.35.0-revizly29",
+  "version": "0.35.0-revizly30",
   "description": "Prebuilt sharp for use with Linux (glibc) 64-bit ARM",
   "author": "Lovell Fuller <npm@lovell.info>",
   "homepage": "https://sharp.pixelplumbing.com",
@@ -15,7 +15,7 @@
   },
   "preferUnplugged": true,
   "optionalDependencies": {
-    "@revizly/sharp-libvips-linux-arm64": "1.0.32"
+    "@revizly/sharp-libvips-linux-arm64": "1.0.33"
   },
   "files": [
     "index.cjs",
