@@ -6,7 +6,7 @@
   "homepage": "https://sharp.pixelplumbing.com",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lovell/sharp.git",
+    "url": "git+https://github.com/janaz/sharp.git",
     "directory": "npm/linux-x64"
   },
   "license": "Apache-2.0",
