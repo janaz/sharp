@@ -1434,6 +1434,8 @@ declare namespace sharp {
         bitdepth?: 8 | 10 | 12 | undefined;
         /** Tune output for a quality metric, one of 'iq', 'ssim' or 'psnr' (optional, default 'iq') */
         tune?: HeifTune | undefined;
+        /** Which encoder libheif uses (must be compiled in) (optional, default 'auto') */
+        encoder?: 'auto' | 'aom' | 'rav1e' | 'svt' | 'x265' | undefined;
     }
 
     interface HeifOptions extends OutputOptions {
@@ -1451,6 +1453,8 @@ declare namespace sharp {
         bitdepth?: 8 | 10 | 12 | undefined;
         /** Tune output for a quality metric, one of 'ssim', 'psnr' or 'iq' (optional, default 'ssim') */
         tune?: HeifTune | undefined;
+        /** Which encoder libheif uses (must be compiled in) (optional, default 'auto') */
+        encoder?: 'auto' | 'aom' | 'rav1e' | 'svt' | 'x265' | undefined;
     }
 
     interface GifOptions extends OutputOptions, AnimationOptions {

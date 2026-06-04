@@ -198,6 +198,7 @@ struct PipelineBaton {
   bool heifLossless;
   int heifBitdepth;
   std::string heifTune;
+  std::string heifEncoder;
   double jxlDistance;
   int jxlDecodingTier;
   int jxlEffort;
