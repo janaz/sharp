@@ -5,7 +5,7 @@ description: Merge upstream changes and release a new @revizly npm version
 ## Context
 
 - Current branch: !`git branch --show-current`
-- Commits in upstream/0.35 not yet in revizlify: !`git fetch upstream && git log --oneline upstream/0.35 ^revizlify`
+- Commits in upstream/main not yet in revizlify: !`git fetch upstream && git log --oneline upstream/main ^revizlify`
 - Current npm version: !`cat npm/linux-x64/package.json | grep '"version"'`
 - Latest revizly tag: !`git tag --list | sort -V | tail -1`
 - Latest @revizly/sharp-libvips-linux-x64 on npm: !`npm view @revizly/sharp-libvips-linux-x64 version`
@@ -16,7 +16,7 @@ Perform the full upstream merge and release cycle for this fork:
 
 ### 1. Merge upstream
 
-Run `git merge upstream/0.35` and resolve conflicts following these rules:
+Run `git merge upstream/main` and resolve conflicts following these rules:
 
 - **modify/delete conflicts** (platforms removed in revizlify): always `git rm` the file — keep them deleted.
 - **New platform dirs in `npm/`** (e.g. `freebsd-wasm32`, `webcontainers-wasm32`, `wasm32`, `win32-*`, `darwin-*`, `linux-arm`, `linuxmusl-*`): `git rm -rf` them — we only keep `linux-arm64` and `linux-x64`.
@@ -28,11 +28,12 @@ Run `git merge upstream/0.35` and resolve conflicts following these rules:
   - DO take upstream's `config.libvips` version bump.
 - **`npm/linux-arm64/package.json`**, **`npm/linux-x64/package.json`**, **`npm/package.json`**: keep the `@revizly` name and current revizly version — do NOT take upstream's `@img` name or their version number.
 - **`.github/workflows/ci.yml`**: drop upstream's new platform jobs (`build-linuxmusl-arm64`, `build-qemu`, `build-emscripten`) — keep only our `lint`, `build-native`, and `release` jobs.
-- **`test/unit/libvips.js`**: drop any new tests for removed platforms (e.g. s390x yarn locator test) — keep only platform-agnostic tests.
+- **`test/unit/libvips.js`**: drop any new tests for removed platforms (e.g. s390x yarn locator test) — keep only platform-agnostic tests. Note upstream has migrated tests to node:test (`suite`/`test` with a `t` param); take upstream's framework style.
+- **`lib/constructor.mjs`**: revizly adds a `heifEncoder: 'auto'` default (svt-av1 encoder selection) right after `heifTune` — always KEEP `heifEncoder`. Take upstream's value for `heifTune` and any other defaults.
 - **All other files** (`src/binding.gyp`, `src/common.h`, `biome.json`, docs, etc.): take upstream's changes.
 - **`npm/wasm-wrappers.js`**: if upstream added new wasm platform dirs that we deleted (e.g. `freebsd-wasm32`, `webcontainers-wasm32`), also remove them from the `platforms` array in this file so the release job doesn't fail trying to read their deleted `package.json`.
 
-After resolving all conflicts, `git add` the resolved files and `git commit` with message `Merge remote-tracking branch 'upstream/0.35' into revizlify`.
+After resolving all conflicts, `git add` the resolved files and `git commit` with message `Merge remote-tracking branch 'upstream/main' into revizlify`.
 
 ### 2. Bump npm version and update sharp-libvips
 
