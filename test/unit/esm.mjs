@@ -1,19 +1,21 @@
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
+import { suite, test } from 'node:test';
+import { pathToFileURL } from 'node:url';
 
 import pkg from '../../package.json' with { type: 'json' };
 
-describe('ESM', () => {
-  it('await import', async () => {
-    const sharp = await import(resolve(pkg.module));
-    assert.deepStrictEqual(typeof sharp.default.versions, 'object');
+suite('ESM', () => {
+  test('await import', async (t) => {
+    t.plan(1);
+    const sharp = await import(pathToFileURL(resolve(pkg.module)));
+    t.assert.deepStrictEqual(typeof sharp.default.versions, 'object');
   });
 
-  it('createRequire', async () => {
+  test('createRequire', async (t) => {
+    t.plan(1);
     const require = createRequire(import.meta.url);
     const sharp = require(resolve(pkg.module));
-    assert.deepStrictEqual(typeof sharp.default.versions, 'object');
+    t.assert.deepStrictEqual(typeof sharp.default.versions, 'object');
   });
 });

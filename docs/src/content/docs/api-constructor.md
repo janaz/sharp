@@ -108,7 +108,7 @@ sharp('input.jpg')
 // resize to 300 pixels wide,
 // emit an 'info' event with calculated dimensions
 // and finally write image data to writableStream
-const { body } = fetch('https://...');
+const { body } = await fetch('https://...');
 const readableStream = Readable.fromWeb(body);
 const transformer = sharp()
   .resize(300)
@@ -116,6 +116,18 @@ const transformer = sharp()
     console.log(`Image height is ${height}`);
   });
 readableStream.pipe(transformer).pipe(writableStream);
+```
+**Example**  
+```js
+// Web Streams API, requires Node.js >= 24.15.0
+import { Duplex } from 'node:stream';
+
+const { body } = await fetch('https://...');
+const transformer = Duplex.toWeb(
+  sharp().resize(300),
+  { readableType: 'bytes' }
+);
+body.pipeThrough(transformer).pipeTo(writable);
 ```
 **Example**  
 ```js
