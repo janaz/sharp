@@ -152,7 +152,7 @@
   "dependencies": {
     "@img/colour": "^1.1.0",
     "detect-libc": "^2.1.2",
-    "semver": "^7.8.2"
+    "semver": "^7.8.3"
   },
   "optionalDependencies": {
     "@revizly/sharp-libvips-linux-arm64": "1.0.37",
@@ -163,10 +163,10 @@
   "devDependencies": {
     "@biomejs/biome": "^2.4.16",
     "@cpplint/cli": "^0.1.0",
-    "@emnapi/runtime": "^1.10.0",
+    "@emnapi/runtime": "^1.11.0",
     "@revizly/sharp-libvips-dev": "1.0.37",
     "@types/node": "*",
-    "emnapi": "^1.10.0",
+    "emnapi": "^1.11.0",
     "exif-reader": "^2.0.3",
     "extract-zip": "^2.0.1",
     "icc": "^4.0.0",
