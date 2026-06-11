@@ -34,3 +34,6 @@ for (const entry of entries) {
   const contents = await fs.readFile(new URL(entry, libDir), "utf-8");
   await fs.writeFile(new URL(entry.replace(".mjs", ".cjs"), distDir), esmToCjs(contents));
 } 
+
+await fs.cp(new URL("index.d.ts", libDir), new URL("index.d.mts", distDir));
+await fs.cp(new URL("index.d.ts", libDir), new URL("index.d.cts", distDir));
