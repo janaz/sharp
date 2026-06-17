@@ -32,6 +32,7 @@ Run `git merge upstream/main` and resolve conflicts following these rules:
 - **`lib/constructor.mjs`**: revizly adds a `heifEncoder: 'auto'` default (svt-av1 encoder selection) right after `heifTune` — always KEEP `heifEncoder`. Take upstream's value for `heifTune` and any other defaults.
 - **All other files** (`src/binding.gyp`, `src/common.h`, `biome.json`, docs, etc.): take upstream's changes.
 - **`npm/wasm-wrappers.js`**: if upstream added new wasm platform dirs that we deleted (e.g. `freebsd-wasm32`, `webcontainers-wasm32`), also remove them from the `platforms` array in this file so the release job doesn't fail trying to read their deleted `package.json`.
+- **`npm/from-local-build.js`**: this runs in our release pipeline. Upstream's stub tree-shaking feature writes `require.resolve('@img/sharp-libvips-${platform}/stub')` into the generated `index.cjs` for darwin/linux platforms — change that `@img` to `@revizly` so it references our published `@revizly/sharp-libvips-*` packages (which expose a `/stub` export). It is `try/catch`-wrapped so a wrong scope won't crash, but the bundler hint silently fails. (May not show as a merge conflict — grep for `@img/sharp-libvips` after every merge and fix it.) Leave the win/wasm branch's `@img/sharp-libvips-${libvipsPlatform}` alone — that code path is dead for this fork.
 
 After resolving all conflicts, `git add` the resolved files and `git commit` with message `Merge remote-tracking branch 'upstream/main' into revizlify`.
 

@@ -34,7 +34,7 @@ cpSync(releaseDir, libDir, {
 const { version, name, description } = require(`./${platform}/package.json`);
 writeFileSync(join(destDir, 'README.md'), `# \`${name}\`\n\n${description}.\n\n${licensing}`);
 const requireStub = (platform.startsWith('darwin') || platform.startsWith('linux'))
-  ? `try { require.resolve('@img/sharp-libvips-${platform}/stub'); } catch {}\n`
+  ? `try { require.resolve('@revizly/sharp-libvips-${platform}/stub'); } catch {}\n`
   : '';
 writeFileSync(join(destDir, 'index.cjs'), `${requireStub}module.exports = require('./lib/sharp-${platform}-${version}.node');`);
 
