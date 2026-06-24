@@ -1,6 +1,6 @@
 {
   "name": "@revizly/sharp",
-  "version": "0.35.0-revizly39",
+  "version": "0.35.0-revizly40",
   "private": "true",
   "workspaces": [
     "linux-arm64",
