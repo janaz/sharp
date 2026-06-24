@@ -1512,11 +1512,11 @@ declare namespace sharp {
         tile?: boolean | undefined;
         /** Horizontal tile size (optional, default 256) */
         tileWidth?: number | undefined;
-        /** Vertical tile size (optional, default 256) */
+        /** Vertical tile size, valid values are integers in the range 1-32768 (optional, default 256) */
         tileHeight?: number | undefined;
-        /** Horizontal resolution in pixels/mm (optional, default 1.0) */
+        /** Horizontal resolution in pixels/mm, valid values are numbers in the range 0.001-1000000 (optional, default 1.0) */
         xres?: number | undefined;
-        /** Vertical resolution in pixels/mm (optional, default 1.0) */
+        /** Vertical resolution in pixels/mm, valid values are numbers in the range 0.001-1000000 (optional, default 1.0) */
         yres?: number | undefined;
         /** Reduce bitdepth to 1, 2 or 4 bit (optional) */
         bitdepth?: 1 | 2 | 4 | undefined;
@@ -1624,13 +1624,13 @@ declare namespace sharp {
     type ExtendWith = 'background' | 'copy' | 'repeat' | 'mirror';
 
     interface ExtendOptions {
-        /** single pixel count to top edge (optional, default 0) */
+        /** single pixel count to top edge, valid values are integers in the range 0-10000 (optional, default 0) */
         top?: number | undefined;
-        /** single pixel count to left edge (optional, default 0) */
+        /** single pixel count to left edge, valid values are integers in the range 0-10000 (optional, default 0) */
         left?: number | undefined;
-        /** single pixel count to bottom edge (optional, default 0) */
+        /** single pixel count to bottom edge, valid values are integers in the range 0-10000 (optional, default 0) */
         bottom?: number | undefined;
-        /** single pixel count to right edge (optional, default 0) */
+        /** single pixel count to right edge, valid values are integers in the range 0-10000 (optional, default 0) */
         right?: number | undefined;
         /** background colour, parsed by the color module, defaults to black without transparency. (optional, default {r:0,g:0,b:0,alpha:1}) */
         background?: ColorLike | undefined;
@@ -1645,7 +1645,7 @@ declare namespace sharp {
         threshold?: number | undefined;
         /** Does the input more closely resemble line art (e.g. vector) rather than being photographic? (optional, default false) */
         lineArt?: boolean | undefined;
-        /** Leave a margin around trimmed content, value is in pixels. (optional, default 0) */
+        /** Leave a margin around trimmed content, integral number of pixels between 0 and 10000000. (optional, default 0) */
         margin?: number | undefined;
     }
 
@@ -1673,11 +1673,11 @@ declare namespace sharp {
     }
 
     interface ClaheOptions {
-        /** width of the region */
+        /** width of the region. Valid values are integers in the range 1-65536. */
         width: number;
-        /** height of the region */
+        /** height of the region. Valid values are integers in the range 1-65536. */
         height: number;
-        /** max slope of the cumulative contrast. A value of 0 disables contrast limiting. Valid values are integers in the range 0-100 (inclusive) (optional, default 3) */
+        /** max slope of the cumulative contrast. A value of 0 disables contrast limiting. Valid values are integers in the range 0-100. (optional, default 3) */
         maxSlope?: number | undefined;
     }
 
