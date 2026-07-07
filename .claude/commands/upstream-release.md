@@ -37,6 +37,15 @@ Run `git merge upstream/main` and resolve conflicts following these rules:
 
 After resolving all conflicts, `git add` the resolved files and `git commit` with message `Merge remote-tracking branch 'upstream/main' into revizlify`.
 
+### libvips version bump (special changes)
+
+When the sharp-libvips release bumps the libvips version (e.g. 8.18.3 → 8.18.4, visible as a new `v8.18.X-revizlyN` tag / `VERSION_VIPS` change), the sharp fork usually gets ahead of upstream sharp (upstream may not have upgraded yet). In that case, on top of the routine pin bumps, apply the same edits every upstream `Upgrade to libvips 8.18.X` commit makes:
+
+- **`package.json`**: `config.libvips` `>=8.18.<old>` → `>=8.18.<new>`.
+- **`src/common.h`**: the compile-time guard — `VIPS_MICRO_VERSION < <old>` → `< <new>` AND the `#error "libvips version 8.18.<old>+ is required ..."` message → `8.18.<new>+`.
+
+(`test/unit/libvips.js` only checks semver validity — no hardcoded version there.) Also watch `build/posix.sh` in sharp-libvips: a libvips bump can make one of our `[revizly]` source patches obsolete or fail (e.g. libvips 8.18.4 raised `heifload.c` `max_items` to 256 itself, so our `grep -q '...= 16;'` guard aborted the build — the patch had to be removed).
+
 ### 2. Bump npm version and update sharp-libvips
 
 Fetch the latest published version of `@revizly/sharp-libvips-linux-x64` from npm:
