@@ -9,7 +9,7 @@ jobs:
       contents: read
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
@@ -73,9 +73,9 @@ jobs:
       - name: Dependencies (Linux musl)
         if: contains(matrix.container, 'alpine')
         run: apk add build-base git python3 fontconfig --update-cache
-      - name: Dependencies (Python 3.11 - macOS, Windows)
+      - name: Dependencies (Python - macOS, Windows)
         if: contains(matrix.os, 'macos') || contains(matrix.os, 'windows')
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
       - name: Dependencies (Node.js)
@@ -84,7 +84,7 @@ jobs:
         with:
           node-version: ${{ matrix.nodejs_version }}
           architecture: ${{ matrix.nodejs_arch }}
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - run: npm install
@@ -110,7 +110,7 @@ jobs:
     needs:
       - build-native
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
