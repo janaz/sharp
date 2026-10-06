@@ -1,5 +1,5 @@
 /*!
-  Copyright 2013 Lovell Fuller and others.
+  SPDX-FileCopyrightText: 2013 Lovell Fuller and others
   SPDX-License-Identifier: Apache-2.0
 */
 
@@ -70,6 +70,17 @@ suite('GIF input', () => {
     t.assert.strictEqual(160, info.height);
     t.assert.strictEqual(80, info.pageHeight);
     t.assert.strictEqual(2, info.pages);
+  });
+
+  test('Single delay with a page count of zero', async (t) => {
+    t.plan(3);
+    const { data, info } = await sharp(fixtures.inputJpg, { pages: 0 })
+      .resize(8)
+      .gif({ delay: 100 })
+      .toBuffer({ resolveWithObject: true });
+    t.assert.strictEqual('gif', info.format);
+    t.assert.strictEqual(data.length, info.size);
+    t.assert.strictEqual(undefined, info.pages);
   });
 
   test('GIF with reduced colours, no dither, low effort reduces file size', async (t) => {

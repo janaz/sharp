@@ -1,5 +1,5 @@
 /*!
-  Copyright 2013 Lovell Fuller and others.
+  SPDX-FileCopyrightText: 2013 Lovell Fuller and others
   SPDX-License-Identifier: Apache-2.0
 */
 
@@ -638,15 +638,17 @@ class PipelineWorker : public Napi::AsyncWorker {
           std::tie(image, background) = sharp::ApplyAlpha(image, baton->extendBackground, shouldPremultiplyAlpha);
         }
         image = sharp::StaySequential(image, nPages > 1 || baton->extendWith != VIPS_EXTEND_BACKGROUND);
-        auto options = VImage::option()->set("extend", baton->extendWith);
-        if (baton->extendWith == VIPS_EXTEND_BACKGROUND) {
-          options->set("background", background);
+        if (nPages > 1) {
+          image = sharp::EmbedMultiPage(image,
+            baton->extendLeft, baton->extendTop, baton->width, baton->height,
+            baton->extendWith, background, nPages, &targetPageHeight);
+        } else {
+          auto options = VImage::option()->set("extend", baton->extendWith);
+          if (baton->extendWith == VIPS_EXTEND_BACKGROUND) {
+            options->set("background", background);
+          }
+          image = image.embed(baton->extendLeft, baton->extendTop, baton->width, baton->height, options);
         }
-        image = nPages > 1
-          ? sharp::EmbedMultiPage(image,
-              baton->extendLeft, baton->extendTop, baton->width, baton->height,
-              baton->extendWith, background, nPages, &targetPageHeight)
-          : image.embed(baton->extendLeft, baton->extendTop, baton->width, baton->height, options);
         if (baton->keepGainMap) {
           gainMap = gainMap.embed(baton->extendLeft / gainMapScaleFactor, baton->extendTop / gainMapScaleFactor,
             baton->width / gainMapScaleFactor, baton->height / gainMapScaleFactor, VImage::option()
@@ -888,7 +890,11 @@ class PipelineWorker : public Napi::AsyncWorker {
         image = image.colourspace(baton->colourspace, VImage::option()->set("source_space", image.interpretation()));
         if (inputProfile.first != nullptr && baton->withIccProfile.empty()) {
           image = sharp::SetProfile(image, inputProfile);
+        } else {
+          g_free(inputProfile.first);
         }
+      } else {
+        g_free(inputProfile.first);
       }
 
       // Extract channel
@@ -1383,8 +1389,7 @@ class PipelineWorker : public Napi::AsyncWorker {
           baton->formatOut = "v";
         } else {
           // Unsupported output format
-          (baton->err).append("Unsupported output format " + baton->fileOut);
-          return Error();
+          throw std::runtime_error("Unsupported output format " + baton->fileOut);
         }
       }
     } catch (std::runtime_error const &err) {
@@ -1467,7 +1472,7 @@ class PipelineWorker : public Napi::AsyncWorker {
           // ECMAScript ArrayBuffer with Uint8Array view
           Napi::TypedArrayOf<uint8_t> data = Napi::Buffer<char>::Copy(env,
             static_cast<char*>(baton->bufferOut), baton->bufferOutLength);
-          sharp::FreeCallback(static_cast<char*>(baton->bufferOut), nullptr);
+          sharp::FreeCallback(nullptr, static_cast<char*>(baton->bufferOut));
           Callback().SHARP_CALLBACK_FN_NAME(Receiver().Value(), { env.Null(), data, info });
         } else {
           // Node.js Buffer
@@ -1659,6 +1664,8 @@ class PipelineWorker : public Napi::AsyncWorker {
     image = image.copy();
     image.set("gainmap-data", reinterpret_cast<VipsCallbackFn>(vips_area_free_cb),
       gainMapJpeg->data, gainMapJpeg->length);
+    gainMapJpeg->free_fn = nullptr;
+    vips_area_unref(gainMapJpeg);
     return image;
   }
 

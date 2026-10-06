@@ -1,5 +1,5 @@
 /*!
-  Copyright 2013 Lovell Fuller and others.
+  SPDX-FileCopyrightText: 2013 Lovell Fuller and others
   SPDX-License-Identifier: Apache-2.0
 */
 
@@ -1042,6 +1042,22 @@ suite('Image metadata', () => {
     const data = await sharp(fixtures.inputJpgWithExif).keepIccProfile().toBuffer();
     const metadata = await sharp(data).metadata();
     t.assert.strictEqual(icc.parse(metadata.icc).description, 'Generic RGB Profile');
+  });
+
+  test('keep existing ICC profile when intermediate images are not cached', async (t) => {
+    t.plan(1);
+    sharp.cache(false);
+    try {
+      const data = await sharp(fixtures.inputJpgWithExif)
+        .greyscale()
+        .rotate(90)
+        .keepIccProfile()
+        .toBuffer();
+      const metadata = await sharp(data).metadata();
+      t.assert.strictEqual(icc.parse(metadata.icc).description, 'Generic RGB Profile');
+    } finally {
+      sharp.cache(true);
+    }
   });
 
   test('keep existing CMYK input profile for CMYK output', async (t) => {
