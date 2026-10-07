@@ -857,8 +857,7 @@ Use these JPEG-XL (JXL) options for output image.
 This feature is experimental, please do not use in production systems.
 
 Requires libvips compiled with support for libjxl.
-The prebuilt binaries do not include this - see
-[installing a custom libvips](/install/#custom-libvips).
+The `@revizly` prebuilt binaries include this.
 
 
 **Throws**:
