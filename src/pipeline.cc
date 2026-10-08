@@ -1205,7 +1205,6 @@ class PipelineWorker : public Napi::AsyncWorker {
         } else if (baton->formatOut == "jxl" ||
           (baton->formatOut == "input" && inputImageType == sharp::ImageType::JXL)) {
           // Write JXL to buffer
-          image = sharp::RemoveAnimationProperties(image);
           VipsArea *area = reinterpret_cast<VipsArea*>(image.jxlsave_buffer(VImage::option()
             ->set("keep", baton->keepMetadata)
             ->set("distance", baton->jxlDistance)
@@ -1397,7 +1396,6 @@ class PipelineWorker : public Napi::AsyncWorker {
         } else if (baton->formatOut == "jxl" || (mightMatchInput && isJxl) ||
           (willMatchInput && inputImageType == sharp::ImageType::JXL)) {
           // Write JXL to file
-          image = sharp::RemoveAnimationProperties(image);
           image.jxlsave(const_cast<char*>(baton->fileOut.data()), VImage::option()
             ->set("keep", baton->keepMetadata)
             ->set("distance", baton->jxlDistance)
