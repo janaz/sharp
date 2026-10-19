@@ -40,6 +40,7 @@ class PipelineWorker : public Napi::AsyncWorker {
     // Increment processing task counter
     sharp::counterProcess++;
 
+    std::pair<char*, size_t> inputProfile(nullptr, 0);
     try {
       // Open input
       vips::VImage image;
@@ -325,7 +326,7 @@ class PipelineWorker : public Napi::AsyncWorker {
       int gainMapScaleFactor = 1;
       if (sharp::HasGainMap(image)) {
         if (baton->keepGainMap) {
-          gainMap = image.gainmap();
+          gainMap = image.gainmap().copy_memory();
           if (image.get_typeof("gainmap-scale-factor") == G_TYPE_INT) {
             gainMapScaleFactor = image.get_int("gainmap-scale-factor");
           }
@@ -378,7 +379,6 @@ class PipelineWorker : public Napi::AsyncWorker {
       }
 
       // Ensure we're using a device-independent colour space
-      std::pair<char*, size_t> inputProfile(nullptr, 0);
       if ((baton->keepMetadata & VIPS_FOREIGN_KEEP_ICC) && baton->withIccProfile.empty()) {
         // Cache input profile for use with output
         inputProfile = sharp::GetProfile(image);
@@ -481,14 +481,14 @@ class PipelineWorker : public Napi::AsyncWorker {
         }
         image = image.rot(autoRotation);
         if (baton->keepGainMap) {
-          gainMap = sharp::StaySequential(gainMap).rot(autoRotation);
+          gainMap = gainMap.rot(autoRotation);
         }
       }
       // Mirror vertically (up-down) about the x-axis
       if (baton->flip) {
         image = image.flip(VIPS_DIRECTION_VERTICAL);
         if (baton->keepGainMap) {
-          gainMap = sharp::StaySequential(gainMap).flip(VIPS_DIRECTION_VERTICAL);
+          gainMap = gainMap.flip(VIPS_DIRECTION_VERTICAL);
         }
       }
       // Mirror horizontally (left-right) about the y-axis
@@ -505,7 +505,7 @@ class PipelineWorker : public Napi::AsyncWorker {
         }
         image = image.rot(rotation);
         if (baton->keepGainMap) {
-          gainMap = sharp::StaySequential(gainMap).rot(rotation);
+          gainMap = gainMap.rot(rotation);
         }
       }
 
@@ -931,11 +931,8 @@ class PipelineWorker : public Napi::AsyncWorker {
         image = image.colourspace(baton->colourspace, VImage::option()->set("source_space", image.interpretation()));
         if (inputProfile.first != nullptr && baton->withIccProfile.empty()) {
           image = sharp::SetProfile(image, inputProfile);
-        } else {
-          g_free(inputProfile.first);
+          inputProfile.first = nullptr;
         }
-      } else {
-        g_free(inputProfile.first);
       }
 
       // Extract channel
@@ -945,10 +942,9 @@ class PipelineWorker : public Napi::AsyncWorker {
           if (baton->extractChannel == 3 && image.has_alpha()) {
             baton->extractChannel = image.bands() - 1;
           } else {
-            (baton->err)
-              .append("Cannot extract channel ").append(std::to_string(baton->extractChannel))
-              .append(" from image with channels 0-").append(std::to_string(image.bands() - 1));
-            return Error();
+            throw std::runtime_error(
+              std::string("Cannot extract channel ").append(std::to_string(baton->extractChannel))
+              .append(" from image with channels 0-").append(std::to_string(image.bands() - 1)));
           }
         }
         VipsInterpretation colourspace = sharp::Is16Bit(image.interpretation())
@@ -1444,6 +1440,8 @@ class PipelineWorker : public Napi::AsyncWorker {
         }
       }
     }
+    g_free(inputProfile.first);
+
     // Clean up libvips' per-request data and threads
     vips_error_clear();
     vips_thread_shutdown();
