@@ -141,4 +141,16 @@ suite('HEIF', () => {
       /Error: Expected one of: psnr, ssim for tune but received fail of type string/
     );
   });
+  test('valid encoder is stored', (t) => {
+    t.plan(1);
+    const pipeline = sharp().heif({ compression: 'av1', encoder: 'svt' });
+    t.assert.equal(pipeline.options.heifEncoder, 'svt');
+  });
+  test('invalid encoder should throw an error', (t) => {
+    t.plan(1);
+    t.assert.throws(
+      () => sharp().heif({ compression: 'av1', encoder: 'fail' }),
+      /Error: Expected one of: auto, aom, rav1e, svt, x265 for encoder but received fail of type string/
+    );
+  });
 });
