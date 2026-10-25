@@ -119,6 +119,7 @@ psnr
 readelf
 removealpha
 reoptimise
+revizly
 rgba
 rgbe
 riscv
