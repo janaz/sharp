@@ -282,7 +282,9 @@ class PipelineWorker : public Napi::AsyncWorker {
           image = VImage::jpegload(const_cast<char*>(baton->input->file.data()), option);
         }
       } else if (scale != 1.0) {
-        vips::VOption *option = GetOptionsForImageType(inputImageType, baton->input)->set("scale", scale);
+        // SVG scale is relative to the density-scaled size of the original input
+        const double loadScale = inputImageType == sharp::ImageType::SVG ? scale * baton->input->density / 72.0 : scale;
+        vips::VOption *option = GetOptionsForImageType(inputImageType, baton->input)->set("scale", loadScale);
         if (inputImageType == sharp::ImageType::WEBP) {
           if (baton->input->buffer != nullptr) {
             // Reload WebP buffer

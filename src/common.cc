@@ -431,7 +431,9 @@ namespace sharp {
     }
     switch (imageType) {
       case ImageType::SVG:
+        // libvips 8.19+ only uses dpi for physical units, so scale to render at the requested density
         option->set("dpi", descriptor->density)
+              ->set("scale", descriptor->density / 72.0)
               ->set("stylesheet", descriptor->svgStylesheet.data())
               ->set("high_bitdepth", descriptor->svgHighBitdepth);
         break;

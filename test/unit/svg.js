@@ -72,6 +72,24 @@ suite('SVG input', () => {
     t.assert.strictEqual(72, (await sharp(data).metadata()).density);
   });
 
+  test('Resize SVG at higher density uses scale-on-load', async (t) => {
+    t.plan(3);
+    const [low, high] = await Promise.all([
+      sharp(fixtures.inputSvg).resize(100).raw().toBuffer({ resolveWithObject: true }),
+      sharp(fixtures.inputSvg, { density: 288 }).resize(100).raw().toBuffer({ resolveWithObject: true })
+    ]);
+    t.assert.strictEqual(high.info.width, 100);
+    t.assert.strictEqual(high.info.height, low.info.height);
+    t.assert.deepStrictEqual(high.data, low.data);
+  });
+
+  test('SVG density scales rendered size', async (t) => {
+    t.plan(2);
+    const { width, height } = await sharp(fixtures.inputSvg, { density: 144 }).metadata();
+    t.assert.strictEqual(width, 200);
+    t.assert.strictEqual(height, 200);
+  });
+
   test('Convert SVG to PNG at 14.4DPI', async (t) => {
     t.plan(3);
     const { data, info } = await sharp(fixtures.inputSvg, { density: 14.4 })
