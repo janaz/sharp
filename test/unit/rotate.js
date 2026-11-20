@@ -532,9 +532,10 @@ suite('Rotation', () => {
       .resize(8)
       .raw()
       .toBuffer();
+    // revizly: colour management runs after the resize (was 61, 74, 51)
     t.assert.strictEqual(r, 61);
-    t.assert.strictEqual(g, 74);
-    t.assert.strictEqual(b, 51);
+    t.assert.strictEqual(g, 75);
+    t.assert.strictEqual(b, 52);
   });
 
   test('Flip and rotate ordering', async (t) => {

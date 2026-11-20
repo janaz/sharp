@@ -408,48 +408,67 @@ class PipelineWorker : public Napi::AsyncWorker {
       }
       char const *processingProfile = image.interpretation() == VIPS_INTERPRETATION_RGB16 ? "p3" : "srgb";
       bool importedToPcs = false;
-      if (
-        sharp::HasProfile(image) &&
-        image.interpretation() != VIPS_INTERPRETATION_LABS &&
-        image.interpretation() != VIPS_INTERPRETATION_GREY16 &&
-        baton->colourspacePipeline != VIPS_INTERPRETATION_CMYK &&
-        !baton->input->ignoreIcc && !baton->withGainMap
-      ) {
-        // Convert to sRGB/P3 using embedded profile
-        try {
-          if (deferColourspace &&
-            (image.format() == VIPS_FORMAT_UCHAR || image.format() == VIPS_FORMAT_USHORT)) {
-            // XYZ PCS is linear and device-independent, so colour management and linearisation are a single operation
-            image = image.icc_import(VImage::option()
-              ->set("embedded", true)
-              ->set("pcs", labPcs ? VIPS_PCS_LAB : VIPS_PCS_XYZ)
-              ->set("intent", VIPS_INTENT_PERCEPTUAL));
-            importedToPcs = true;
-          } else {
-            image = image.icc_transform(processingProfile, VImage::option()
-              ->set("embedded", true)
-              ->set("depth", sharp::Is16Bit(image.interpretation()) ? 16 : 8)
-              ->set("intent", VIPS_INTENT_PERCEPTUAL));
+      auto const usesEmbeddedProfile = [&](VImage const &image) {
+        return
+          sharp::HasProfile(image) &&
+          image.interpretation() != VIPS_INTERPRETATION_LABS &&
+          image.interpretation() != VIPS_INTERPRETATION_GREY16 &&
+          baton->colourspacePipeline != VIPS_INTERPRETATION_CMYK &&
+          !baton->input->ignoreIcc && !baton->withGainMap;
+      };
+      auto const usesCmykProfile = [&](VImage const &image) {
+        return
+          image.interpretation() == VIPS_INTERPRETATION_CMYK &&
+          baton->colourspacePipeline != VIPS_INTERPRETATION_CMYK;
+      };
+      // Colour management to the processing profile, then flatten
+      auto const colourManageAndFlatten = [&](VImage image) {
+        if (usesEmbeddedProfile(image)) {
+          // Convert to sRGB/P3 using embedded profile
+          try {
+            if (deferColourspace &&
+              (image.format() == VIPS_FORMAT_UCHAR || image.format() == VIPS_FORMAT_USHORT)) {
+              // XYZ PCS is linear and device-independent, so colour management and linearisation are a single operation
+              image = image.icc_import(VImage::option()
+                ->set("embedded", true)
+                ->set("pcs", labPcs ? VIPS_PCS_LAB : VIPS_PCS_XYZ)
+                ->set("intent", VIPS_INTENT_PERCEPTUAL));
+              importedToPcs = true;
+            } else {
+              image = image.icc_transform(processingProfile, VImage::option()
+                ->set("embedded", true)
+                ->set("depth", sharp::Is16Bit(image.interpretation()) ? 16 : 8)
+                ->set("intent", VIPS_INTENT_PERCEPTUAL));
+            }
+          } catch(...) {
+            sharp::VipsWarningCallback(nullptr, G_LOG_LEVEL_WARNING, "Invalid embedded profile", nullptr);
           }
-        } catch(...) {
-          sharp::VipsWarningCallback(nullptr, G_LOG_LEVEL_WARNING, "Invalid embedded profile", nullptr);
+        } else if (usesCmykProfile(image)) {
+          image = image.icc_transform(processingProfile, VImage::option()
+            ->set("input_profile", "cmyk")
+            ->set("intent", VIPS_INTENT_PERCEPTUAL));
         }
-      } else if (
-        image.interpretation() == VIPS_INTERPRETATION_CMYK &&
-        baton->colourspacePipeline != VIPS_INTERPRETATION_CMYK
-      ) {
-        image = image.icc_transform(processingProfile, VImage::option()
-          ->set("input_profile", "cmyk")
-          ->set("intent", VIPS_INTENT_PERCEPTUAL));
-      }
 
-      if (deferColourspace) {
-        image = sharp::EnsureColourspace(image, baton->colourspacePipeline);
-      }
+        if (deferColourspace) {
+          image = sharp::EnsureColourspace(image, baton->colourspacePipeline);
+        }
 
-      // Flatten image to remove alpha channel
-      if (baton->flatten && image.has_alpha()) {
-        image = sharp::Flatten(image, baton->flattenBackground);
+        // Flatten image to remove alpha channel
+        if (baton->flatten && image.has_alpha()) {
+          image = sharp::Flatten(image, baton->flattenBackground);
+        }
+        return image;
+      };
+      // revizly: colour management and flatten run after the resize, on the output-sized
+      // image (like libvips' thumbnail) - both are per-pixel, so this is what they cost on
+      // a source without shrink-on-load. Only when nothing that depends on the processing
+      // colourspace (gamma, greyscale, composite, a Lab/XYZ pipeline) runs before the
+      // resize; otherwise, and without a resize, the upstream order is kept.
+      bool const shouldResize = hshrink != 1.0 || vshrink != 1.0;
+      bool const colourAfterResize = shouldResize && !deferColourspace &&
+        !(baton->gamma >= 1 && baton->gamma <= 3) && !baton->greyscale && baton->composite.empty();
+      if (!colourAfterResize) {
+        image = colourManageAndFlatten(image);
       }
 
       // Gamma encoding (darken)
@@ -462,7 +481,6 @@ class PipelineWorker : public Napi::AsyncWorker {
         image = image.colourspace(VIPS_INTERPRETATION_B_W);
       }
 
-      bool const shouldResize = hshrink != 1.0 || vshrink != 1.0;
       bool const shouldBlur = baton->blurSigma != 0.0;
       bool const shouldConv = baton->convKernelWidth * baton->convKernelHeight > 0;
       bool const shouldSharpen = baton->sharpenSigma != 0.0;
@@ -473,7 +491,7 @@ class PipelineWorker : public Napi::AsyncWorker {
       }
 
       VipsBandFormat premultiplyFormat = image.format();
-      bool const shouldPremultiplyAlpha = image.has_alpha() &&
+      bool shouldPremultiplyAlpha = image.has_alpha() &&
         (shouldResize || shouldBlur || shouldConv || shouldSharpen);
 
       if (shouldPremultiplyAlpha) {
@@ -489,6 +507,24 @@ class PipelineWorker : public Napi::AsyncWorker {
           gainMap = gainMap.resize(1.0 / hshrink, VImage::option()
             ->set("vscale", 1.0 / vshrink)
             ->set("kernel", baton->kernel));
+        }
+      }
+
+      if (colourAfterResize) {
+        // the ICC transform and flatten need straight (unpremultiplied) colour; whatever
+        // keeps an alpha channel is premultiplied again for the steps below
+        bool const altersColour = usesEmbeddedProfile(image) || usesCmykProfile(image) ||
+          (baton->flatten && image.has_alpha());
+        if (shouldPremultiplyAlpha && altersColour) {
+          image = image.unpremultiply().cast(premultiplyFormat);
+        }
+        image = colourManageAndFlatten(image);
+        if (shouldPremultiplyAlpha && altersColour) {
+          if (image.has_alpha()) {
+            image = image.premultiply().cast(premultiplyFormat);
+          } else {
+            shouldPremultiplyAlpha = false;  // flattened
+          }
         }
       }
 
