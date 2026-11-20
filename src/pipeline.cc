@@ -367,7 +367,7 @@ class PipelineWorker : public Napi::AsyncWorker {
               baton->widthPre / gainMapScaleFactor, baton->heightPre / gainMapScaleFactor);
           }
         } else if (baton->withGainMap) {
-          image = image.uhdr2scRGB();
+          image = image.UHDR2scRGB();
         }
         image = sharp::RemoveGainMap(image);
       } else {
