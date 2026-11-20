@@ -416,6 +416,11 @@ namespace sharp {
   */
   VImage RemoveGainMap(VImage image);
 
+  /*
+    Remove CICP and gain map parameters (libvips 8.19 HDR signalling): SDR, ICC-only output.
+  */
+  VImage RemoveHdrSignalling(VImage image);
+
 }  // namespace sharp
 
 #endif  // SRC_COMMON_H_

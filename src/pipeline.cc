@@ -374,6 +374,9 @@ class PipelineWorker : public Napi::AsyncWorker {
         baton->keepGainMap = false;
         baton->withGainMap = false;
       }
+      if (!baton->keepGainMap && !baton->withGainMap) {
+        image = sharp::RemoveHdrSignalling(image);
+      }
 
       // Any pre-shrinking may already have been done
       inputWidth = image.width();

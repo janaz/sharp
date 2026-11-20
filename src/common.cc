@@ -1186,4 +1186,24 @@ namespace sharp {
     copy.remove("gainmap-data");
     return copy;
   }
+
+  /*
+    revizly: drop the HDR signalling libvips 8.19 loaders attach, so output stays SDR and
+    ICC-managed as with libvips 8.18:
+    - CICP (e.g. JPEG XL attaches matrix 0 for RGB), which savers write: heifsave hands
+      matrix 0 to SVT-AV1, which rejects it for 4:2:0 ("SVT-AV1 error");
+    - gain map parameters, which make CICP-capable savers (PNG, HEIF/AVIF, JXL) apply the
+      gain map and write BT.2020/PQ HDR instead of the SDR image.
+  */
+  VImage RemoveHdrSignalling(VImage image) {
+    VImage copy = image.copy();
+    for (char const *field : {
+      "cicp-colour-primaries", "cicp-transfer-characteristics", "cicp-matrix-coefficients",
+      "cicp-full-range-flag", "gainmap-max-content-boost", "gainmap-min-content-boost",
+      "gainmap-gamma", "gainmap-offset-sdr", "gainmap-offset-hdr"
+    }) {
+      copy.remove(field);
+    }
+    return copy;
+  }
 }  // namespace sharp
