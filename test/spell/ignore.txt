@@ -7,6 +7,7 @@ bitdepth
 catmull
 ccittfax
 cgif
+cicp
 cielab
 clahe
 cmyk
